@@ -186,6 +186,22 @@ public class FracType implements DataType {
     }
 
     /*
+     * Compares this object to another of the same inherited type
+     *
+     * returns  int < 0 if  this is smaller
+     *          int = 0 if  this is equal
+     *          int > 0 if  this is larger
+     *
+     * @exception   -   IllegalArgumentException    -   Class mismatch
+     */
+    public int compareTo(DataType anotherDataType) {
+        if (!anotherDataType.getClass().equals(this.getClass())) {
+            throw new IllegalArgumentException("Can not compare two different DataTypes");
+        }
+        return compareToFrac((FracType) anotherDataType);
+    }
+
+    /*
      * Gets a string representation of the object after it is simplified
      * Uses / as the separator for numerator and denominator
      *
@@ -204,7 +220,7 @@ public class FracType implements DataType {
      *          int = 0 if  this is equal
      *          int > 0 if  this is larger
      */
-    public int compareTo(FracType anotherFracType) {
+    public int compareToFrac(FracType anotherFracType) {
         FracType[] newFractions = toCommonDenominator(this, anotherFracType);
         //Case for if both are negative
         if (newFractions[0].numerator < 0 && newFractions[1].numerator < 0) {

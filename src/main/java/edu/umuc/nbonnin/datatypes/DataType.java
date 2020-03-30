@@ -48,10 +48,6 @@ public interface DataType extends Comparable<DataType>, java.io.Serializable {
      *          It is implemented so that the exception can be caught by the user
      *          It also allows for comparing of different types of objects in the future
      */
-    default int compareTo(DataType anotherDataType) {
-        if (!anotherDataType.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Can not compare two different DataTypes");
-        }
-        return 0;
-    }
+    int compareTo(DataType anotherDataType);
+
 }

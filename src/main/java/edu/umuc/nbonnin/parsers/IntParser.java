@@ -9,6 +9,7 @@ import java.util.Arrays;
  *      *****IntParser Class*****
  *
  * IntParser implements DataParser
+ * IntParser is abstract and only its static methods can be used
  *
  * The IntParser class takes a space delimited string of integers
  * The IntParser class parses the string and returns an array of IntType objects
@@ -25,7 +26,7 @@ import java.util.Arrays;
  *                              Returns     :   IntType[]   -   represents the list in object form
  *                              Throws      :   NumberFormatException   -   For invalid character
  */
-public class IntParser implements DataParser {
+public abstract class IntParser implements DataParser {
 
     /*
      * 0 Argument Constructor

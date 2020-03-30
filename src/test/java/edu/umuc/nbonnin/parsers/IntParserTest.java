@@ -27,6 +27,12 @@ public class IntParserTest {
         String s13 = "-0.5, 1 2 -2.34, -4.8";   //Decimal characters
         String s14 = "";                        //Empty string
         String s15 = null;                      //null string
+
+        /*
+         * Creating the objects to compare to
+         * This could have also simply been comparison strings
+         * This methods allows easier implementation of array comparison later
+         */
         IntType[] i1 = new IntType[]{
                 new IntType(1),
                 new IntType(2),

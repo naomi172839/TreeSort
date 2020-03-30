@@ -94,7 +94,24 @@ public class IntType implements DataType {
      *          int = 0 if  this is equal
      *          int > 0 if  this is larger
      */
-    public int compareTo(IntType anotherIntType) {
+    public int compareToInt(IntType anotherIntType) {
         return value.compareTo(anotherIntType.getValue());
+    }
+
+    /*
+     * Compares this object to another of the same inherited type
+     * Cheats and uses the Integer.compareTo method
+     *
+     * returns  int < 0 if  this is smaller
+     *          int = 0 if  this is equal
+     *          int > 0 if  this is larger
+     *
+     * @exception   -   IllegalArgumentException    -    class mismatch
+     */
+    public int compareTo(DataType anotherDataType) {
+        if (!anotherDataType.getClass().equals(this.getClass())) {
+            throw new IllegalArgumentException("Can not compare two different DataTypes");
+        }
+        return compareToInt((IntType) anotherDataType);
     }
 }
