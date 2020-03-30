@@ -28,8 +28,14 @@ package edu.umuc.nbonnin.datatypes;
  *              toString    :   Arguments   :   None
  *                              Returns     :   String  -   String representation of the object
  *
- *              **Compares this object to another**
- *              compareTo   :   Arguments   :   IntType -   Represents the object to compare this to
+ *              **Compares this object to another of the same inheritance**
+ *              compareTo   :   Arguments   :   DataType-   Represents the object to compare this to
+ *                              Returns     :   int     -   < 0 : this is smaller
+ *                                                          = 0 : this is equal
+ *                                                          > 0 : this is larger
+ *                              Throws      :   IllegalArgumentException    -   If there is a class mismatch
+ *              **Compares this object to another of the same inheritance**
+ *              compareToFrac:  Arguments   :   IntType -   Represents the object to compare this to
  *                              Returns     :   int     -   < 0 : this is smaller
  *                                                          = 0 : this is equal
  *                                                          > 0 : this is larger

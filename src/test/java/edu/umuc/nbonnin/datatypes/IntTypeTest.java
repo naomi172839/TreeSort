@@ -10,11 +10,13 @@ class IntTypeTest {
 
     @Test
     void getValue() {
+        //Creates the IntType objects
         IntType i1 = new IntType(10);
         IntType i2 = new IntType(7);
         IntType i3 = new IntType(10003);
         IntType i4 = new IntType(-8);
         IntType i5 = new IntType(-3);
+        //Checks that the value is correctly stored and retrieved
         assertEquals(10, i1.getValue());
         assertEquals(7, i2.getValue());
         assertEquals(10003, i3.getValue());
@@ -24,16 +26,19 @@ class IntTypeTest {
 
     @Test
     void setValue() {
+        //Creates the IntType objects
         IntType i1 = new IntType(10);
         IntType i2 = new IntType(7);
         IntType i3 = new IntType(10003);
         IntType i4 = new IntType(-8);
         IntType i5 = new IntType(-3);
+        //Modifies the value
         i1.setValue(3);
         i2.setValue(9);
         i3.setValue(-6);
         i4.setValue(-91);
         i5.setValue(14);
+        //Checks that the values were updated correctly
         assertEquals(3, i1.getValue());
         assertEquals(9, i2.getValue());
         assertEquals(-6, i3.getValue());
@@ -43,11 +48,13 @@ class IntTypeTest {
 
     @Test
     void testToString() {
+        //Creates the IntType objects
         IntType i1 = new IntType(10);
         IntType i2 = new IntType(7);
         IntType i3 = new IntType(10003);
         IntType i4 = new IntType(-8);
         IntType i5 = new IntType(-3);
+        //Checks that the string returned matches the expected string
         assertEquals("10", i1.toString());
         assertEquals("7", i2.toString());
         assertEquals("10003", i3.toString());

@@ -70,8 +70,14 @@ package edu.umuc.nbonnin.datatypes;
  *                                              int     -   Represents the denominator (initially)
  *                              Returns     :   int     -   Representing the greatest common divisor
  *
- *              **Compares this object to another**
- *              compareTo   :   Arguments   :   FracType-   Represents the object to compare this to
+ *              **Compares this object to another of the same inheritance**
+ *              compareTo   :   Arguments   :   DataType-   Represents the object to compare this to
+ *                              Returns     :   int     -   < 0 : this is smaller
+ *                                                          = 0 : this is equal
+ *                                                          > 0 : this is larger
+ *                              Throws      :   IllegalArgumentException    -   If there is a class mismatch
+ *              **Compares this object to another FracType**
+ *              compareToFrac:  Arguments   :   FracType-   Represents the object to compare this to
  *                              Returns     :   int     -   < 0 : this is smaller
  *                                                          = 0 : this is equal
  *                                                          > 0 : this is larger

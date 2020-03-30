@@ -2,7 +2,6 @@ package edu.umuc.nbonnin.nodes;
 
 import edu.umuc.nbonnin.datatypes.DataType;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /*
@@ -53,7 +52,7 @@ import java.util.ArrayList;
  *                                                          = 0 : this is equal
  *                                                          > 0 : this is larger
  */
-public class TreeNode<T extends DataType> implements ITreeNode<T>, Serializable {
+public class TreeNode<T extends DataType> implements ITreeNode<T> {
 
     /*
      *      *****Instance Variables*****
