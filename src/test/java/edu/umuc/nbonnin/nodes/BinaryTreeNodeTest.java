@@ -232,12 +232,10 @@ public class BinaryTreeNodeTest {
         IntType i1 = new IntType(10);
         IntType i2 = new IntType(7);
         IntType i3 = new IntType(-8);
-        IntType i4 = new IntType(-3);
         //Create the IntType nodes
         BinaryTreeNode<IntType> n1 = new BinaryTreeNode<>(i1);
         BinaryTreeNode<IntType> n2 = new BinaryTreeNode<>(i2);
         BinaryTreeNode<IntType> n3 = new BinaryTreeNode<>(i3);
-        BinaryTreeNode<IntType> n4 = new BinaryTreeNode<>(i4);
         assertTrue(n1.compareTo(n2) > 0);
         assertTrue(n1.compareTo(n3) > 0);
         assertTrue(n2.compareTo(n1) < 0);

@@ -26,7 +26,7 @@ import java.util.ArrayList;
  *                              Returns     :   BinaryTreeNode  -   Represents the left child
  *
  *              **Sets the left child of the node**
- *              setValue    :   Arguments   :   BinaryTreeNode  -   Represents the new left child
+ *              setLeft    :   Arguments   :   BinaryTreeNode  -   Represents the new left child
  *                              Returns     :   None
  *
  *              **Gets the right child of the node**
@@ -48,6 +48,7 @@ public class BinaryTreeNode<T extends DataType> extends TreeNode<T> {
      *
      * left     :   BinaryTreeNode  -   Represents the left child
      * right    :   BinaryTreeNode  -   Represents the right child
+     * parent   :   BinaryTreeNode  -   Represents the parent
      */
     private BinaryTreeNode<T> left;
     private BinaryTreeNode<T> right;
@@ -111,7 +112,7 @@ public class BinaryTreeNode<T extends DataType> extends TreeNode<T> {
         return this.parent;
     }
 
-    public <V extends BinaryTreeNode<T>> void setParent(V parent) {
+    public void setParent(BinaryTreeNode<T> parent) {
         this.parent = parent;
     }
 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class BinarySearchTreeNodeTest {
 
     @Test
@@ -180,6 +181,7 @@ public class BinarySearchTreeNodeTest {
         n5.setLeft(n6);
         n5.setRight(n7);
         n5.setRight(n8);
+        //Creates the ArrayLists needed for comparison
         ArrayList<BinarySearchTreeNode<IntType>> l1 = new ArrayList<>();
         ArrayList<BinarySearchTreeNode<FracType>> l2 = new ArrayList<>();
         l1.add(n4);
@@ -191,17 +193,56 @@ public class BinarySearchTreeNodeTest {
     }
 
     @Test
-    void testCompareTo() {
+    void getCountAndSetCount() {
         //Creates the IntType objects
         IntType i1 = new IntType(10);
         IntType i2 = new IntType(7);
         IntType i3 = new IntType(-8);
         IntType i4 = new IntType(-3);
+        //Creates the FracType objects
+        FracType f1 = new FracType(1, 2);
+        FracType f2 = new FracType(10, 4);
+        FracType f3 = new FracType(11, 17);
+        FracType f4 = new FracType(99, 33);
         //Create the IntType nodes
         BinarySearchTreeNode<IntType> n1 = new BinarySearchTreeNode<>(i1);
         BinarySearchTreeNode<IntType> n2 = new BinarySearchTreeNode<>(i2);
         BinarySearchTreeNode<IntType> n3 = new BinarySearchTreeNode<>(i3);
         BinarySearchTreeNode<IntType> n4 = new BinarySearchTreeNode<>(i4);
+        //Create the FracType nodes
+        BinarySearchTreeNode<FracType> n5 = new BinarySearchTreeNode<>(f1);
+        BinarySearchTreeNode<FracType> n6 = new BinarySearchTreeNode<>(f2);
+        BinarySearchTreeNode<FracType> n7 = new BinarySearchTreeNode<>(f3);
+        BinarySearchTreeNode<FracType> n8 = new BinarySearchTreeNode<>(f4);
+        //Sets the counts
+        n1.setCount(10);
+        n2.setCount(5);
+        n3.setCount(2);
+        n5.setCount(11);
+        n6.setCount(1);
+        n7.setCount(99);
+        //Checks that the counts can be retrieved
+        //Also checks the default value;
+        assertEquals(10, n1.getCount());
+        assertEquals(5, n2.getCount());
+        assertEquals(2, n3.getCount());
+        assertEquals(1, n4.getCount());
+        assertEquals(11, n5.getCount());
+        assertEquals(1, n6.getCount());
+        assertEquals(99, n7.getCount());
+        assertEquals(1, n8.getCount());
+    }
+
+    @Test
+    void testCompareTo() {
+        //Creates the IntType objects
+        IntType i1 = new IntType(10);
+        IntType i2 = new IntType(7);
+        IntType i3 = new IntType(-8);
+        //Create the IntType nodes
+        BinarySearchTreeNode<IntType> n1 = new BinarySearchTreeNode<>(i1);
+        BinarySearchTreeNode<IntType> n2 = new BinarySearchTreeNode<>(i2);
+        BinarySearchTreeNode<IntType> n3 = new BinarySearchTreeNode<>(i3);
         assertTrue(n1.compareTo(n2) > 0);
         assertTrue(n1.compareTo(n3) > 0);
         assertTrue(n2.compareTo(n1) < 0);
@@ -240,8 +281,11 @@ public class BinarySearchTreeNodeTest {
         //Sets children
         n2.setLeft(n4);
         n6.setLeft(n8);
-        assertEquals(n4, n1.getParent().getLeft());
-        assertEquals(n8, n5.getParent().getLeft());
+        //Sets counts
+        n4.setCount(12);
+        n8.setCount(4);
+        assertEquals(12, n1.getParent().getLeft().getCount());
+        assertEquals(4, n5.getParent().getLeft().getCount());
     }
 
     @Test
