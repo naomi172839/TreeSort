@@ -51,6 +51,7 @@ public class BinaryTreeNode<T extends DataType> extends TreeNode<T> {
      */
     private BinaryTreeNode<T> left;
     private BinaryTreeNode<T> right;
+    private BinaryTreeNode<T> parent;
 
     /*
      * 0 Argument constructor
@@ -98,6 +99,20 @@ public class BinaryTreeNode<T extends DataType> extends TreeNode<T> {
     public void setRight(BinaryTreeNode<T> right) {
         this.right = right;
         right.setParent(this);
+    }
+
+    /*
+     * Overrides method from TreeNode
+     * Returns a parent object of the appropriate type
+     * Example of covariant return type
+     */
+    @Override
+    public BinaryTreeNode<T> getParent() {
+        return this.parent;
+    }
+
+    public <V extends BinaryTreeNode<T>> void setParent(V parent) {
+        this.parent = parent;
     }
 
     /*
