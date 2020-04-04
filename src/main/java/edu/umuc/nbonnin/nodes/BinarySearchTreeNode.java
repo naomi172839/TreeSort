@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Variables:   left        :   BinarySearchTreeNode    -   Represents the left child
  *              right       :   BinarySearchTreeNode    -   Represents the left child
  *              parent      :   BinarySearchTreeNode    -   Represents the parent
- *              count       :   BinarySearchTreeNode    -   Represents the number of nodes present
+ *              count       :   int                     -   Represents the number of nodes present
  *
  * Constructor: 0 Argument  -   Throws IllegalArgumentException
  *              1 Argument  -   T               -   Represents the value of the object
@@ -84,7 +84,7 @@ public class BinarySearchTreeNode<T extends DataType> extends BinaryTreeNode<T> 
 
     /*
      * 1 Argument constructor
-     * Create a new BinaryTreeNode
+     * Create a new BinarySearchTreeNode
      */
     public BinarySearchTreeNode() {
         super();
