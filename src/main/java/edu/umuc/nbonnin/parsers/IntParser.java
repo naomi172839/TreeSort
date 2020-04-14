@@ -1,7 +1,5 @@
 package edu.umuc.nbonnin.parsers;
 
-import edu.umuc.nbonnin.datatypes.IntType;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,7 +24,7 @@ import java.util.Arrays;
  *                              Returns     :   IntType[]   -   represents the list in object form
  *                              Throws      :   NumberFormatException   -   For invalid character
  */
-public abstract class IntParser implements DataParser {
+public abstract class IntParser {
 
     /*
      * 0 Argument Constructor
@@ -52,17 +50,17 @@ public abstract class IntParser implements DataParser {
      *
      * Throws:  NumberFormatException   -   if there are non digit characters, except '-'
      */
-    public static IntType[] parse(String list) {
+    public static Integer[] parse(String list) {
         checkValid(list);
         ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
         toSplit.removeIf(s -> s.equals(""));
-        ArrayList<IntType> split = new ArrayList<>();
+        ArrayList<Integer> split = new ArrayList<>();
         for (String token : toSplit) {
             if (!token.matches("[0-9-]+")) {
                 throw new NumberFormatException(token + " is an invalid character");
             }
-            split.add(new IntType(Integer.parseInt(token)));
+            split.add(Integer.parseInt(token));
         }
-        return split.toArray(new IntType[0]);
+        return split.toArray(new Integer[0]);
     }
 }

@@ -1,6 +1,6 @@
 package edu.umuc.nbonnin.parsers;
 
-import edu.umuc.nbonnin.datatypes.FracType;
+import edu.umuc.nbonnin.treesort.FracType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *                              Returns     :   FracType[]  -   represents the list in object form
  *                              Throws      :   NumberFormatException   -   For invalid character
  */
-public abstract class FracParser implements DataParser {
+public abstract class FracParser {
 
     /*
      * Convert a string into a IntType array

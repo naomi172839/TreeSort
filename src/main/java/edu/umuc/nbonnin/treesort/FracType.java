@@ -1,4 +1,4 @@
-package edu.umuc.nbonnin.datatypes;
+package edu.umuc.nbonnin.treesort;
 
 /*
  *          *****FracType Class*****
@@ -82,7 +82,7 @@ package edu.umuc.nbonnin.datatypes;
  *                                                          = 0 : this is equal
  *                                                          > 0 : this is larger
  */
-public class FracType implements DataType {
+public class FracType implements Comparable<Object> {
 
     /*
      *      *****Instance Variables*****
@@ -191,21 +191,6 @@ public class FracType implements DataType {
         return numerator + "/" + denominator;
     }
 
-    /*
-     * Compares this object to another of the same inherited type
-     *
-     * returns  int < 0 if  this is smaller
-     *          int = 0 if  this is equal
-     *          int > 0 if  this is larger
-     *
-     * @exception   -   IllegalArgumentException    -   Class mismatch
-     */
-    public int compareTo(DataType anotherDataType) {
-        if (!anotherDataType.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Can not compare two different DataTypes");
-        }
-        return compareToFrac((FracType) anotherDataType);
-    }
 
     /*
      * Gets a string representation of the object after it is simplified
@@ -226,6 +211,7 @@ public class FracType implements DataType {
      *          int = 0 if  this is equal
      *          int > 0 if  this is larger
      */
+
     public int compareToFrac(FracType anotherFracType) {
         FracType[] newFractions = toCommonDenominator(this, anotherFracType);
         //Case for if both are negative
@@ -234,6 +220,15 @@ public class FracType implements DataType {
         }
         return newFractions[0].numerator - newFractions[1].numerator;
 
+    }
+
+    @Override
+    public int compareTo(Object anotherObject) {
+        if (!anotherObject.getClass().equals(this.getClass())) {
+            throw new IllegalArgumentException("Incomparable Classes");
+        } else {
+            return compareToFrac((FracType) anotherObject);
+        }
     }
 
     /*

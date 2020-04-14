@@ -1,6 +1,5 @@
 package edu.umuc.nbonnin.parsers;
 
-import edu.umuc.nbonnin.datatypes.IntType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -33,55 +32,55 @@ public class IntParserTest {
          * This could have also simply been comparison strings
          * This methods allows easier implementation of array comparison later
          */
-        IntType[] i1 = new IntType[]{
-                new IntType(1),
-                new IntType(2),
-                new IntType(3),
-                new IntType(4),
-                new IntType(5),
+        Integer[] i1 = new Integer[]{
+                1,
+                2,
+                3,
+                4,
+                5,
         };
-        IntType[] i2 = new IntType[]{
-                new IntType(5),
-                new IntType(10),
-                new IntType(15),
-                new IntType(20),
-                new IntType(30),
-                new IntType(40),
+        Integer[] i2 = new Integer[]{
+                5,
+                10,
+                15,
+                20,
+                30,
+                40,
         };
-        IntType[] i3 = new IntType[]{
-                new IntType(5),
-                new IntType(6),
-                new IntType(7),
-                new IntType(8),
-                new IntType(9),
+        Integer[] i3 = new Integer[]{
+                5,
+                6,
+                7,
+                8,
+                9,
         };
-        IntType[] i4 = new IntType[]{
-                new IntType(1),
-                new IntType(3),
-                new IntType(5),
-                new IntType(7),
-                new IntType(9),
+        Integer[] i4 = new Integer[]{
+                1,
+                3,
+                5,
+                7,
+                9,
         };
-        IntType[] i5 = new IntType[]{
-                new IntType(2),
-                new IntType(4),
-                new IntType(6),
-                new IntType(8),
-                new IntType(10),
+        Integer[] i5 = new Integer[]{
+                2,
+                4,
+                6,
+                8,
+                10,
         };
-        IntType[] i6 = new IntType[]{
-                new IntType(-5),
-                new IntType(-4),
-                new IntType(-3),
-                new IntType(-2),
-                new IntType(-1),
+        Integer[] i6 = new Integer[]{
+                -5,
+                -4,
+                -3,
+                -2,
+                -1,
         };
-        IntType[] i7 = new IntType[]{
-                new IntType(-10),
-                new IntType(-9),
-                new IntType(-8),
-                new IntType(-7),
-                new IntType(-6),
+        Integer[] i7 = new Integer[]{
+                -10,
+                -9,
+                -8,
+                -7,
+                -6,
         };
         //The to string method is used to prevent writing an additional class to check 
         //if the arrays are equal by value

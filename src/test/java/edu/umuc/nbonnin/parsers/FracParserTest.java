@@ -1,6 +1,6 @@
 package edu.umuc.nbonnin.parsers;
 
-import edu.umuc.nbonnin.datatypes.FracType;
+import edu.umuc.nbonnin.treesort.FracType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

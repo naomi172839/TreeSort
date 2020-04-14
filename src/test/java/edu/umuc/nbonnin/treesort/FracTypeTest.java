@@ -1,4 +1,4 @@
-package edu.umuc.nbonnin.datatypes;
+package edu.umuc.nbonnin.treesort;
 
 import org.junit.jupiter.api.Test;
 
@@ -167,7 +167,7 @@ class FracTypeTest {
         FracType f6 = new FracType(6, 2);
         FracType f7 = new FracType(-5, 12);
         FracType f8 = new FracType(-2, 6);
-        IntType i1 = new IntType(7);
+        Integer i1 = 7;
         assertTrue(f1.compareTo(f2) < 0);
         assertTrue(f2.compareTo(f3) > 0);
         assertTrue(f3.compareTo(f4) < 0);
