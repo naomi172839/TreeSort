@@ -2,8 +2,6 @@ package edu.umuc.nbonnin.treesort;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class FracTypeTest {
@@ -167,17 +165,12 @@ class FracTypeTest {
         FracType f6 = new FracType(6, 2);
         FracType f7 = new FracType(-5, 12);
         FracType f8 = new FracType(-2, 6);
-        Integer i1 = 7;
         assertTrue(f1.compareTo(f2) < 0);
         assertTrue(f2.compareTo(f3) > 0);
         assertTrue(f3.compareTo(f4) < 0);
         assertTrue(f4.compareTo(f5) < 0);
         assertEquals(0, f5.compareTo(f6));   //Checks if two different fractions with the same value
         assertTrue(f7.compareTo(f8) < 0);   //Checks negative number comparison
-        //Tests for incompatible types
-        AtomicInteger i = new AtomicInteger(); //Atomic to capture the value returned if any
-        assertThrows(IllegalArgumentException.class, () -> i.set(f1.compareTo(i1))); //Integer is not thread safe
-        assertEquals(0, i.get()); //Ensures that nothing is actually returned
     }
 
     @Test

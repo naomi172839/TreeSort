@@ -82,7 +82,7 @@ package edu.umuc.nbonnin.treesort;
  *                                                          = 0 : this is equal
  *                                                          > 0 : this is larger
  */
-public class FracType implements Comparable<Object> {
+public class FracType implements Comparable<FracType> {
 
     /*
      *      *****Instance Variables*****
@@ -188,6 +188,9 @@ public class FracType implements Comparable<Object> {
      */
     @Override
     public String toString() {
+        if (numerator == 0 || denominator == 0) {
+            return "0";
+        }
         return numerator + "/" + denominator;
     }
 
@@ -212,23 +215,21 @@ public class FracType implements Comparable<Object> {
      *          int > 0 if  this is larger
      */
 
-    public int compareToFrac(FracType anotherFracType) {
+    @Override
+    public int compareTo(FracType anotherFracType) {
         FracType[] newFractions = toCommonDenominator(this, anotherFracType);
+        if (newFractions[0].numerator == 0 && (newFractions[1].numerator == 0 || newFractions[1].denominator == 0)) {
+            return 0;
+        }
+        if (newFractions[0].denominator == 0 && (newFractions[1].numerator == 0 || newFractions[1].denominator == 0)) {
+            return 0;
+        }
         //Case for if both are negative
         if (newFractions[0].numerator < 0 && newFractions[1].numerator < 0) {
             return Math.abs(newFractions[1].numerator) - Math.abs(newFractions[0].numerator);
         }
         return newFractions[0].numerator - newFractions[1].numerator;
 
-    }
-
-    @Override
-    public int compareTo(Object anotherObject) {
-        if (!anotherObject.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Incomparable Classes");
-        } else {
-            return compareToFrac((FracType) anotherObject);
-        }
     }
 
     /*

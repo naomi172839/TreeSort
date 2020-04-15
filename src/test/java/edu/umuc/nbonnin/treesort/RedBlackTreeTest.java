@@ -26,6 +26,11 @@ public class RedBlackTreeTest {
         treeOne.delete(299);
         treeOne.delete(455);
         treeOne.delete(-3);
-        System.out.println(treeOne);
+        RedBlackTree<FracType, FracType> treeTwo = new RedBlackTree<>();
+        for (int i = -1000; i < 1000; i++) {
+            FracType temp = new FracType(i, (int) Math.ceil((50 * Math.sin(i))));
+            treeTwo.insert(temp, temp);
+        }
+        System.out.println("done");
     }
 }

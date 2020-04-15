@@ -44,17 +44,12 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     public void delete(K key) {
-        this.root = deleteRecursive(this.root, key);
+        deleteFromSubtree(root, key);
     }
 
-    private Node deleteRecursive(Node node, K key) {
-        if (node == null) {
-            return null;
-        } else if (key.compareTo(node.key) < 0) {
-            node.left = deleteRecursive(node.left, key);
-        } else if (key.compareTo(node.key) > 0) {
-            node.right = deleteRecursive(node.right, key);
-        } else {
+    private void deleteFromSubtree(Node node, K key) {
+        node = find(node, key);
+        if (node != null) {
             if (node.count > 1) {
                 node.count--;
             } else {
@@ -64,7 +59,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                     node.key = temp.key;
                     node.value = temp.value;
                     node = temp;
-                    node.right = deleteRecursive(temp, node.key);
                 }
                 //Now we are operating on a node with no or one child
                 Node end;
@@ -116,7 +110,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 }
             }
         }
-        return root;
     }
 
     private void insertionAdjust(Node node) {
@@ -303,14 +296,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             left = right = parent = null;
             count = 1;
             color = BLACK;
-        }
-
-        private void increment() {
-            count++;
-        }
-
-        private void decrement() {
-            count--;
         }
     }
 
