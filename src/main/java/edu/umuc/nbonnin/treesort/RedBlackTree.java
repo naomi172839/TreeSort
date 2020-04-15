@@ -11,14 +11,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         root = null;
     }
 
-    public Node getRoot() {
-        return root;
-    }
-
-    public void setRoot(Node root) {
-        this.root = root;
-    }
-
     public void insert(K key, V value) {
         Node newNode = new Node(key, value);
         this.root = insertRecursive(this.root, newNode);
@@ -262,7 +254,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return null;
     }
 
-    private Node find(Node node, K key) {
+    public Node find(Node node, K key) {
         if (node == null || key.compareTo(node.key) == 0) {
             return node;
         }
@@ -280,6 +272,19 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             node = node.left;
         }
         return node;
+    }
+
+    public void inOrder(Node node) {
+        if (node == null) {
+            return;
+        }
+        inOrder(node.left);
+        System.out.println(node.value.toString());
+        inOrder(node.right);
+    }
+
+    public Node getRoot() {
+        return root;
     }
 
     private class Node {

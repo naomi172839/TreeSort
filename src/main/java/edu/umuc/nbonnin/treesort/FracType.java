@@ -109,10 +109,15 @@ public class FracType implements Comparable<FracType> {
      * Create a new FracType object
      */
     public FracType(int numerator, int denominator) {
+        if ((numerator < 0 && denominator < 0) || (numerator > 0 && denominator < 0)) {
+            numerator *= -1;
+            denominator *= -1;
+        }
         this.numerator = numerator;
         this.denominator = denominator;
         //Converts the integer to a float to prevent integer division
         this.value = (numerator * 1.0) / denominator;
+
     }
 
     /*
