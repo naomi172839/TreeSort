@@ -23,6 +23,9 @@ public class RedBlackTreeTest {
             treeOne.insert(i, i);
         }
         treeOne.delete(255);
+        treeOne.delete(299);
+        treeOne.delete(455);
+        treeOne.delete(-3);
         System.out.println(treeOne);
     }
 }

@@ -49,7 +49,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
     private Node deleteRecursive(Node node, K key) {
         if (node == null) {
-            return node;
+            return null;
         } else if (key.compareTo(node.key) < 0) {
             node.left = deleteRecursive(node.left, key);
         } else if (key.compareTo(node.key) > 0) {
@@ -58,21 +58,65 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             if (node.count > 1) {
                 node.count--;
             } else {
-                if (node.left == null) {
-                    deletionAdjust(node);
-                    return node.right;
-                } else if (node.right == null) {
-                    deletionAdjust(node);
-                    return node.left;
+                //If node has 2 children
+                if (node.left != null && node.right != null) {
+                    Node temp = findMinimumInRightSubTree(node.right);
+                    node.key = temp.key;
+                    node.value = temp.value;
+                    node = temp;
+                    node.right = deleteRecursive(temp, node.key);
                 }
-                Node temp = findMinimumInRightSubTree(node.right);
-                node.key = temp.key;
-                node.value = temp.value;
-                //deletionAdjust(node);
-                node.right = deleteRecursive(node.right, temp.key);
+                //Now we are operating on a node with no or one child
+                Node end;
+                //Sets our end node to the opposite child if one child is null or null if both are null
+                if (node.left == null) {
+                    end = node.right;
+                } else {
+                    end = node.left;
+                }
+                //Only for cases in which there was an actual child
+                if (end != null) {
+                    //For trees with only two nodes
+                    if (node == root) {
+                        end.parent = null;
+                        root = end;
+                    }
+                    //If node is a left child, replace node with end node
+                    else if (node == node.parent.left) {
+                        end.parent = node.parent;
+                        node.parent.left = end;
+                    }
+                    //If node is a right child, replace node with end node
+                    else {
+                        end.parent = node.parent;
+                        node.parent.right = end;
+                    }
+                    //Fixes double black problem
+                    if (node.color == BLACK) {
+                        deletionAdjust(end);
+                    }
+                }
+                //Case for trees with single node
+                else if (node == root) {
+                    root = null;
+                }
+                //Case for if the node has no children
+                else {
+                    //Fixes the double black problem
+                    if (node.color == BLACK) {
+                        //Adjust BEFORE making the node null
+                        deletionAdjust(node);
+                    }
+                    //Removes the node from its parent (deleting it)
+                    if (node == node.parent.left) {
+                        node.parent.left = end;
+                    } else {
+                        node.parent.right = end;
+                    }
+                }
             }
         }
-        return node;
+        return root;
     }
 
     private void insertionAdjust(Node node) {
@@ -113,17 +157,68 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private void deletionAdjust(Node node) {
-        if (node.color == RED || node.right.color == RED) {
-            node.color = BLACK;
-        } else if (node.color == BLACK && (node.right.color == BLACK || node.right == null)) {
-            if ((getSibling(node).color == BLACK || getSibling(node) == null) &&
-                    (getSibling(node).left.color == RED || getSibling(node).right.color == RED)) {
-                if (getSibling(node) == getSibling(node).parent.left) {
-                    if (getSibling(node).left.color == BLACK) {
-
+        //Ensures that balancing will happen until tree is balanced
+        while (node != root && node.color == BLACK) {
+            //If node is a left child
+            if (node == node.parent.left) {
+                Node sibling = node.parent.right;
+                //If nodes sibling is red (and also not null)
+                if (sibling != null && sibling.color == RED) {
+                    sibling.color = BLACK;
+                    node.parent.color = RED;
+                    rotateLeft(node.parent);
+                    sibling = node.parent.right;
+                }
+                //If siblings children are both black (or null) after rotation
+                assert sibling != null;
+                if ((sibling.left == null || sibling.left.color == BLACK) &&
+                        (sibling.right == null || sibling.right.color == BLACK)) {
+                    sibling.color = RED;
+                    node = node.parent;
+                } else {
+                    if (sibling.right == null || sibling.right.color == BLACK) {
+                        sibling.left.color = BLACK;
+                        sibling.color = RED;
+                        rotateRight(sibling);
+                        sibling = node.parent.right;
                     }
+                    sibling.color = node.parent.color;
+                    node.parent.color = BLACK;
+                    sibling.right.color = BLACK;
+                    rotateLeft(node.parent);
+                    node = root;
                 }
             }
+            //If node is a right child
+            else {
+                Node sibling = node.parent.left;
+                if (sibling != null && sibling.color == RED) {
+                    sibling.color = BLACK;
+                    node.parent.color = RED;
+                    rotateRight(node.parent);
+                    sibling = node.parent.left;
+                }
+                assert sibling != null;
+                if ((sibling.left == null || sibling.left.color == BLACK) &&
+                        (sibling.right == null || sibling.right.color == BLACK)) {
+                    sibling.color = RED;
+                    node = node.parent;
+                } else {
+                    if (sibling.left == null || sibling.left.color == BLACK) {
+                        sibling.right.color = BLACK;
+                        sibling.color = RED;
+                        rotateLeft(sibling);
+                        sibling = node.parent.left;
+                    }
+                    sibling.color = node.parent.color;
+                    node.parent.color = BLACK;
+                    sibling.left.color = BLACK;
+                    rotateRight(node.parent);
+                    node = root;
+                }
+
+            }
+            node.color = BLACK;
         }
     }
 
@@ -140,7 +235,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         } else {
             node.parent.right = oldLeft;
         }
+        oldLeft.parent = node.parent;
         oldLeft.right = node;
+        node.parent = oldLeft;
     }
 
     private void rotateLeft(Node node) {
@@ -156,7 +253,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         } else {
             node.parent.left = oldRight;
         }
+        oldRight.parent = node.parent;
         oldRight.left = node;
+        node.parent = oldRight;
     }
 
     private Node getSibling(Node node) {
@@ -184,12 +283,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private Node findMinimumInRightSubTree(Node node) {
-        Node temp = node;
         while (node.left != null) {
-            temp = node.left;
             node = node.left;
         }
-        return temp;
+        return node;
     }
 
     private class Node {
