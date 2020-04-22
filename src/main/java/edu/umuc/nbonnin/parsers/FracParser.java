@@ -41,7 +41,7 @@ public abstract class FracParser {
         String[] temp;
         for (String token : toSplit) {
             if (!token.matches("(?:[-1-9][0-9]*|0)/[1-9][0-9]*")) {
-                throw new NumberFormatException("Illegal Expression: " + token);
+                throw new NumberFormatException("(FracType) Invalid Expression: " + token + "\n");
             }
             temp = token.split("/");
             split.add(new FracType(Integer.parseInt(temp[0]), Integer.parseInt(temp[1])));

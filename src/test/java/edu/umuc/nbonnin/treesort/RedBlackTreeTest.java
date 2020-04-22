@@ -31,6 +31,5 @@ public class RedBlackTreeTest {
             FracType temp = new FracType(i, (int) Math.ceil((50 * Math.sin(i))));
             treeTwo.insert(temp, temp);
         }
-        treeTwo.inOrder(treeTwo.getRoot());
     }
 }

@@ -6,9 +6,11 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     private static final boolean BLACK = false;
 
     private Node root;
+    private StringBuilder returnedString;
 
     public RedBlackTree() {
         root = null;
+        returnedString = new StringBuilder();
     }
 
     public void insert(K key, V value) {
@@ -46,7 +48,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 node.count--;
             } else {
                 //If node has 2 children
-                if (node.left != null && node.right != null) {
+                if (getLeft(node) != null && getRight(node) != null) {
                     Node temp = findMinimumInRightSubTree(node.right);
                     node.key = temp.key;
                     node.value = temp.value;
@@ -55,10 +57,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 //Now we are operating on a node with no or one child
                 Node end;
                 //Sets our end node to the opposite child if one child is null or null if both are null
-                if (node.left == null) {
-                    end = node.right;
+                if (getLeft(node) == null) {
+                    end = getRight(node);
                 } else {
-                    end = node.left;
+                    end = getLeft(node);
                 }
                 //Only for cases in which there was an actual child
                 if (end != null) {
@@ -68,17 +70,17 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                         root = end;
                     }
                     //If node is a left child, replace node with end node
-                    else if (node == node.parent.left) {
-                        end.parent = node.parent;
+                    else if (node == getLeft(getParent(node))) {
+                        end.parent = getParent(node);
                         node.parent.left = end;
                     }
                     //If node is a right child, replace node with end node
                     else {
-                        end.parent = node.parent;
+                        end.parent = getParent(node);
                         node.parent.right = end;
                     }
                     //Fixes double black problem
-                    if (node.color == BLACK) {
+                    if (getColor(node) == BLACK) {
                         deletionAdjust(end);
                     }
                 }
@@ -89,15 +91,15 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 //Case for if the node has no children
                 else {
                     //Fixes the double black problem
-                    if (node.color == BLACK) {
+                    if (getColor(node) == BLACK) {
                         //Adjust BEFORE making the node null
                         deletionAdjust(node);
                     }
                     //Removes the node from its parent (deleting it)
-                    if (node == node.parent.left) {
-                        node.parent.left = end;
+                    if (node == getLeft(getParent(node))) {
+                        node.parent.left = null;
                     } else {
-                        node.parent.right = end;
+                        node.parent.right = null;
                     }
                 }
             }
@@ -105,110 +107,110 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private void insertionAdjust(Node node) {
-        node.color = RED;
+        setColor(node, RED);
         //Double Red Problems
-        if (node != null && node != root && node.parent.color == RED) {
+        if (node != null && node != root && getColor(getParent(node)) == RED) {
             //Try to recolor first (if appropriate)
-            if (getSibling(node.parent) != null && getSibling(node.parent).color == RED) {
-                node.parent.color = BLACK;
-                getSibling(node.parent).color = BLACK;
-                node.parent.parent.color = RED;
-                insertionAdjust(node.parent.parent);
+            if (getColor(getSibling(getParent(node)))) {
+                setColor(getParent(node), BLACK);
+                setColor(getSibling(node.parent), BLACK);
+                setColor(getGrandParent(node), RED);
+                insertionAdjust(getGrandParent(node));
             }
             //If parent is a left child
-            else if (node.parent == node.parent.parent.left) {
+            else if (getParent(node) == getLeft(getGrandParent(node))) {
                 //If node is a right child
-                if (node == node.parent.right) {
-                    rotateLeft(node.parent);
+                if (node == getRight(getParent(node))) {
+                    rotateLeft(getParent(node));
                 }
                 //If node is a right or left child
-                node.parent.color = BLACK;
-                node.parent.parent.color = RED;
-                rotateRight(node.parent.parent);
+                setColor(getParent(node), BLACK);
+                setColor(getGrandParent(node), RED);
+                rotateRight(getGrandParent(node));
             }
             //If parent is a right child
-            else if (node.parent == node.parent.parent.right) {
+            else if (getParent(node) == getRight(getGrandParent(node))) {
                 //If node is a left child
-                if (node == node.parent.left) {
-                    rotateRight(node.parent);
+                if (node == getLeft(getParent(node))) {
+                    rotateRight(getParent(node));
                 }
                 //If node is a right or a left child
-                node.parent.color = BLACK;
-                node.parent.parent.color = RED;
-                rotateLeft(node.parent.parent);
+                setColor(getParent(node), BLACK);
+                setColor(getGrandParent(node), RED);
+                rotateLeft(getGrandParent(node));
             }
         }
-        root.color = BLACK;
+        setColor(root, BLACK);
     }
 
     private void deletionAdjust(Node node) {
         //Ensures that balancing will happen until tree is balanced
-        while (node != root && node.color == BLACK) {
+        while (node != root && getColor(node) == BLACK) {
             //If node is a left child
-            if (node == node.parent.left) {
-                Node sibling = node.parent.right;
+            if (node == getLeft(getParent(node))) {
+                Node sibling = getRight(getParent(node));
                 //If nodes sibling is red (and also not null)
-                if (sibling != null && sibling.color == RED) {
-                    sibling.color = BLACK;
-                    node.parent.color = RED;
-                    rotateLeft(node.parent);
-                    sibling = node.parent.right;
+                if (getColor(sibling) == RED) {
+                    setColor(sibling, BLACK);
+                    setColor(getParent(node), RED);
+                    rotateLeft(getParent(node));
+                    sibling = getRight(getParent(node));
                 }
                 //If siblings children are both black (or null) after rotation
                 assert sibling != null;
-                if ((sibling.left == null || sibling.left.color == BLACK) &&
-                        (sibling.right == null || sibling.right.color == BLACK)) {
-                    sibling.color = RED;
-                    node = node.parent;
+                if (getColor(getLeft(sibling)) == BLACK &&
+                        getColor(getRight(sibling)) == BLACK) {
+                    setColor(sibling, RED);
+                    node = getParent(node);
                 } else {
-                    if (sibling.right == null || sibling.right.color == BLACK) {
-                        sibling.left.color = BLACK;
-                        sibling.color = RED;
+                    if (getColor(getRight(sibling)) == BLACK) {
+                        setColor(getLeft(sibling), BLACK);
+                        setColor(sibling, RED);
                         rotateRight(sibling);
-                        sibling = node.parent.right;
+                        sibling = getRight(getParent(node));
                     }
-                    sibling.color = node.parent.color;
-                    node.parent.color = BLACK;
-                    sibling.right.color = BLACK;
+                    setColor(sibling, getColor(getParent(node)));
+                    setColor(getParent(node), BLACK);
+                    setColor(getRight(sibling), BLACK);
                     rotateLeft(node.parent);
                     node = root;
                 }
             }
             //If node is a right child
             else {
-                Node sibling = node.parent.left;
-                if (sibling != null && sibling.color == RED) {
-                    sibling.color = BLACK;
-                    node.parent.color = RED;
+                Node sibling = getLeft(getParent(node));
+                if (getColor(sibling) == RED) {
+                    setColor(sibling, BLACK);
+                    setColor(getParent(node), RED);
                     rotateRight(node.parent);
-                    sibling = node.parent.left;
+                    sibling = getLeft(getParent(node));
                 }
                 assert sibling != null;
-                if ((sibling.left == null || sibling.left.color == BLACK) &&
-                        (sibling.right == null || sibling.right.color == BLACK)) {
-                    sibling.color = RED;
-                    node = node.parent;
+                if (getColor(getLeft(sibling)) == BLACK &&
+                        getColor(getRight(sibling)) == BLACK) {
+                    setColor(sibling, RED);
+                    node = getParent(node);
                 } else {
-                    if (sibling.left == null || sibling.left.color == BLACK) {
-                        sibling.right.color = BLACK;
-                        sibling.color = RED;
+                    if (getColor(getLeft(sibling)) == BLACK) {
+                        setColor(getRight(sibling), BLACK);
+                        setColor(sibling, RED);
                         rotateLeft(sibling);
-                        sibling = node.parent.left;
+                        sibling = getLeft(getParent(node));
                     }
-                    sibling.color = node.parent.color;
-                    node.parent.color = BLACK;
-                    sibling.left.color = BLACK;
+                    setColor(sibling, getColor(getParent(node)));
+                    setColor(getParent(node), BLACK);
+                    setColor(getLeft(sibling), BLACK);
                     rotateRight(node.parent);
                     node = root;
                 }
 
             }
-            node.color = BLACK;
+            setColor(node, BLACK);
         }
     }
 
     private void rotateRight(Node node) {
-        if (node.left == null) {
+        if (getLeft(node) == null) {
             return;
         }
         Node oldLeft = node.left;
@@ -226,7 +228,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private void rotateLeft(Node node) {
-        if (node.right == null) {
+        if (getRight(node) == null) {
             return;
         }
         Node oldRight = node.right;
@@ -254,6 +256,47 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return null;
     }
 
+    private Node getParent(Node node) {
+        if (node != null && node.parent != null) {
+            return node.parent;
+        }
+        return null;
+    }
+
+    private Node getGrandParent(Node node) {
+        if (node != null && node.parent != root) {
+            return node.parent.parent;
+        }
+        return null;
+    }
+
+    private Node getLeft(Node node) {
+        if (node != null && node.left != null) {
+            return node.left;
+        }
+        return null;
+    }
+
+    private Node getRight(Node node) {
+        if (node != null && node.right != null) {
+            return node.right;
+        }
+        return null;
+    }
+
+    private boolean getColor(Node node) {
+        if (node != null && node.color == RED) {
+            return RED;
+        }
+        return BLACK;
+    }
+
+    private void setColor(Node node, boolean color) {
+        if (node != null) {
+            node.color = color;
+        }
+    }
+
     public Node find(Node node, K key) {
         if (node == null || key.compareTo(node.key) == 0) {
             return node;
@@ -274,14 +317,46 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return node;
     }
 
-    public void inOrder(Node node) {
+    private void inOrder(Node node) {
         if (node == null) {
             return;
         }
         inOrder(node.left);
-        System.out.println(node.value.toString());
+        int tempCount = node.count;
+        while (tempCount > 0) {
+            returnedString.append(node.value.toString()).append(" ");
+            tempCount--;
+        }
         inOrder(node.right);
     }
+
+    private void reverseOrder(Node node) {
+        if (node == null) {
+            return;
+        }
+        reverseOrder(node.right);
+        int tempCount = node.count;
+        while (tempCount > 0) {
+            returnedString.append(node.value.toString()).append(" ");
+            tempCount--;
+        }
+        reverseOrder(node.left);
+    }
+
+    public String normalSort() {
+        inOrder(root);
+        String temp = returnedString.toString();
+        returnedString = new StringBuilder();
+        return temp.trim();
+    }
+
+    public String reverseSort() {
+        reverseOrder(root);
+        String temp = returnedString.toString();
+        returnedString = new StringBuilder();
+        return temp.trim();
+    }
+
 
     public Node getRoot() {
         return root;

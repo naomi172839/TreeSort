@@ -57,7 +57,7 @@ public abstract class IntParser {
         ArrayList<Integer> split = new ArrayList<>();
         for (String token : toSplit) {
             if (!token.matches("[0-9-]+")) {
-                throw new NumberFormatException(token + " is an invalid character");
+                throw new NumberFormatException("(Integer) Invalid Expression: " + token + "\n");
             }
             split.add(Integer.parseInt(token));
         }
