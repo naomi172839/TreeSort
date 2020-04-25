@@ -59,6 +59,5 @@ public abstract class FracParser {
         if (list.equals("")) {
             throw new NumberFormatException("List can not be empty");
         }
-
     }
 }

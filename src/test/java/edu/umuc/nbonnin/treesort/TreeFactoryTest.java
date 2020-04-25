@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TreeFactoryTest {
 
     String s1, s2, s3, s4, s5;
+    Node.Visitor visitor = null;
 
     @BeforeEach
     void setUp() {
@@ -23,8 +24,8 @@ public class TreeFactoryTest {
     void testNewIntegerTree() {
         RedBlackTree<Integer, Integer> t1 = TreeFactory.newIntegerTree(s1);
         RedBlackTree<Integer, Integer> t2 = TreeFactory.newIntegerTree(s2);
-        assertEquals(s1, t1.normalSort());
-        assertEquals(s1, t2.normalSort());
+        assertEquals(s1, t1.normalSort(visitor));
+        assertEquals(s1, t2.normalSort(visitor));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newIntegerTree(s3));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newIntegerTree(s4));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newIntegerTree(s5));
@@ -34,8 +35,8 @@ public class TreeFactoryTest {
     void testNewFracTypeTree() {
         RedBlackTree<FracType, FracType> t3 = TreeFactory.newFracTypeTree(s3);
         RedBlackTree<FracType, FracType> t4 = TreeFactory.newFracTypeTree(s4);
-        assertEquals(s3, t3.normalSort());
-        assertEquals(s3, t4.normalSort());
+        assertEquals(s3, t3.normalSort(visitor));
+        assertEquals(s3, t4.normalSort(visitor));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newFracTypeTree(s1));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newFracTypeTree(s2));
         assertThrows(NumberFormatException.class, () -> TreeFactory.newFracTypeTree(s5));
@@ -47,10 +48,10 @@ public class TreeFactoryTest {
         RedBlackTree<?, ?> t2 = TreeFactory.newGenericTree(s2);
         RedBlackTree<?, ?> t3 = TreeFactory.newGenericTree(s3);
         RedBlackTree<?, ?> t4 = TreeFactory.newGenericTree(s4);
-        assertEquals(s1, t1.normalSort());
-        assertEquals(s1, t2.normalSort());
-        assertEquals(s3, t3.normalSort());
-        assertEquals(s3, t4.normalSort());
+        assertEquals(s1, t1.normalSort(visitor));
+        assertEquals(s1, t2.normalSort(visitor));
+        assertEquals(s3, t3.normalSort(visitor));
+        assertEquals(s3, t4.normalSort(visitor));
         String e1 = assertThrows(NumberFormatException.class, () -> TreeFactory.newGenericTree(s5)).getMessage();
         System.out.println(e1);
     }
