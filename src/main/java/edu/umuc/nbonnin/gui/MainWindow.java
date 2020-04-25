@@ -1,6 +1,7 @@
 package edu.umuc.nbonnin.gui;
 
 import edu.umuc.nbonnin.treesort.Node;
+import edu.umuc.nbonnin.treesort.RedBlackTree;
 import edu.umuc.nbonnin.treesort.TreeFactory;
 
 import javax.swing.*;
@@ -120,6 +121,7 @@ public class MainWindow {
         sort.addActionListener(e -> getSorted());
         view = new JButton("View Tree");
         view.setBorder(buttonBorder);
+        view.addActionListener(e -> showViewer());
         //Radio Buttons
         normal = new JRadioButton();
         normal.setMnemonic(-1);
@@ -144,6 +146,30 @@ public class MainWindow {
         type.add(student);
         type.add(detect);
         detect.setSelected(true);      //Default selection
+    }
+
+    private void showViewer() {
+        try {
+            RedBlackTree<?, ?> tree = TreeFactory.newGenericTree(originalList.getText());
+            Viewer view = new Viewer(tree);
+            view.setSize(1024, 512);
+            JFrame viewerFrame = new JFrame("Viewer");
+            JScrollPane display = new JScrollPane();
+            display.setViewportView(view);
+            display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            viewerFrame.setSize(new Dimension(400, 600));
+            viewerFrame.setPreferredSize(new Dimension(768, 512));
+            viewerFrame.setLocationRelativeTo(null);
+            viewerFrame.add(display);
+            viewerFrame.pack();
+            viewerFrame.setVisible(true);
+
+            //view.changeTree(tree.getRoot());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(main, e.getMessage());
+        }
     }
 
     private void createInputPanel() {
@@ -358,7 +384,6 @@ public class MainWindow {
 
     private void getSorted() {
         String list = originalList.getText();
-        System.out.println(type.getSelection().getMnemonic());
         Node.Visitor visitor = null;
         try {
             switch (type.getSelection().getMnemonic()) {

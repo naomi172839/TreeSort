@@ -112,7 +112,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         //Double Red Problems
         if (node != null && node != root && getColor(getParentNode(node)) == RED) {
             //Try to recolor first (if appropriate)
-            if (getColor(getSiblingNode(getParentNode(node)))) {
+            if (getColor(getSiblingNode(getParentNode(node))) == RED) {
                 setColor(getParentNode(node), BLACK);
                 setColor(getSiblingNode(node.getParent()), BLACK);
                 setColor(getGrandParentNode(node), RED);
@@ -122,7 +122,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             else if (getParentNode(node) == getLeftNode(getGrandParentNode(node))) {
                 //If node is a right child
                 if (node == getRightNode(getParentNode(node))) {
-                    rotateLeft(getParentNode(node));
+                    rotateLeft(node = getParentNode(node));
                 }
                 //If node is a right or left child
                 setColor(getParentNode(node), BLACK);
@@ -133,7 +133,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             else if (getParentNode(node) == getRightNode(getGrandParentNode(node))) {
                 //If node is a left child
                 if (node == getLeftNode(getParentNode(node))) {
-                    rotateRight(getParentNode(node));
+                    rotateRight(node = getParentNode(node));
                 }
                 //If node is a right or a left child
                 setColor(getParentNode(node), BLACK);
@@ -216,7 +216,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         }
         Node<K, V> oldLeft = node.getLeft();
         node.setLeft(oldLeft.getRight());
-        if (node == root) {
+        if (node.getParent() == null) {
             root = oldLeft;
         } else if (node == node.getParent().getLeft()) {
             node.getParent().setLeft(oldLeft);
@@ -234,12 +234,12 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         }
         Node<K, V> oldRight = node.getRight();
         node.setRight(oldRight.getLeft());
-        if (node == root) {
+        if (node.getParent() == null) {
             root = oldRight;
-        } else if (node == node.getParent().getRight()) {
-            node.getParent().setRight(oldRight);
-        } else {
+        } else if (node == node.getParent().getLeft()) {
             node.getParent().setLeft(oldRight);
+        } else {
+            node.getParent().setRight(oldRight);
         }
         oldRight.setParent(node.getParent());
         oldRight.setLeft(node);
@@ -327,7 +327,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         preOrder(node.getRight(), visitor);
     }
 
-    public void postOrder(Node<K, V> node, Node.Visitor visitor) {
+    public void postOrder(Node<?, ?> node, Node.Visitor visitor) {
         if (node == null) {
             return;
         }
@@ -336,7 +336,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         visitor.visit(node);
     }
 
-    private void inOrder(Node<K, V> node, Node.Visitor visitor) {
+    public void inOrder(Node<?, ?> node, Node.Visitor visitor) {
         if (node == null) {
             return;
         }
