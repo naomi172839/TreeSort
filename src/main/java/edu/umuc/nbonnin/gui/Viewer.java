@@ -5,14 +5,12 @@ import edu.umuc.nbonnin.treesort.Node;
 import edu.umuc.nbonnin.treesort.RedBlackTree;
 import edu.umuc.nbonnin.treesort.TreeFactory;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*
  *      *****Viewer Class*****
@@ -22,12 +20,11 @@ import java.util.Map;
  */
 public class Viewer extends JPanel {
 
-    private final int GRID_HEIGHT = 40;
+    private final int GRID_HEIGHT;
     private final Map<Node<? extends Comparable<?>, ?>, Point> cords = new HashMap<>();
-    private final int GRID_WIDTH = 40;
+    private final int GRID_WIDTH;
     JFrame viewerFrame;
     JScrollPane display;
-    String masterList;
     /*
      *  ***Instance Variables***
      *
@@ -69,8 +66,10 @@ public class Viewer extends JPanel {
         display = new JScrollPane(this);
         int count = getNodes();
         double maxHeight = 2 * (Math.log(count + 1) / Math.log(2));
-        int preferredHeight = (int) (maxHeight * (GRID_HEIGHT * 1.5));
-        int preferredWidth = (int) (maxHeight * preferredHeight * 0.75);
+        GRID_HEIGHT = 40;
+        GRID_WIDTH = 40;
+        int preferredHeight = (int) Math.ceil(maxHeight * GRID_HEIGHT * 0.75);
+        int preferredWidth = (int) Math.ceil((count + 1) / 2.0 * GRID_WIDTH * 2.0) + 120;
         this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         updateTree(list);
     }
@@ -143,20 +142,22 @@ public class Viewer extends JPanel {
     }
 
     public void updateTree(String list) {
-
         display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         display.setAutoscrolls(true);
         viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
-        viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
+        viewerFrame.setPreferredSize(new Dimension(1024, 512));  //Sets a preferred size
         viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
         viewerFrame.getContentPane().add(display);
         display.setViewportView(this);
         viewerFrame.pack();
+        viewerFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         viewerFrame.setVisible(true);
-        ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
+        StringBuilder temp = new StringBuilder();
+        ArrayList<String> original = new ArrayList<>(Arrays.asList(list.split(" ")));
+        LinkedHashSet<String> toConvert = new LinkedHashSet<>(original);
+        ArrayList<String> toSplit = new ArrayList<>(toConvert);
         Timer timer = new Timer(1000, new ActionListener() {
-            final StringBuilder temp = new StringBuilder();
             int i = 0;
 
             @Override
@@ -166,13 +167,13 @@ public class Viewer extends JPanel {
                     viewerFrame.setTitle("Viewer -- Completed Drawing");
                     return;
                 }
-                System.out.println(toSplit.get(i));
                 temp.append(toSplit.get(i)).append(" ");
                 tree = TreeFactory.newGenericTree(temp.toString());
                 validate();
                 i++;
             }
         });
+        timer.setInitialDelay(30000);
         timer.start();
     }
 

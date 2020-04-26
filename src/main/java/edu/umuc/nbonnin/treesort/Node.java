@@ -94,11 +94,11 @@ public class Node<K extends Comparable<K>, V> {
         }
     }
 
-    /*
+
     public void setParent(Node<K, V> parent) {
         this.parent = parent;
     }
-    */
+
     public boolean getColor() {
         return color;
     }

@@ -618,16 +618,16 @@ public class MainWindow {
             switch (type.getSelection().getMnemonic()) {    //Gets the datatype selection
                 case (1):   //Integer
                     if (normal.isSelected()) {  //Normal order
-                        sortedList.setText(TreeFactory.newIntegerTree(list).normalSort(visitor));
+                        sortedList.setText(TreeFactory.newIntegerTree(list).normalSort());
                     } else {    //Reverse order
-                        sortedList.setText(TreeFactory.newIntegerTree(list).reverseSort(visitor));
+                        sortedList.setText(TreeFactory.newIntegerTree(list).reverseSort());
                     }
                     break;
                 case (2):   //Fraction
                     if (normal.isSelected()) {  //Normal order
-                        sortedList.setText(TreeFactory.newFracTypeTree(list).normalSort(visitor));
+                        sortedList.setText(TreeFactory.newFracTypeTree(list).normalSort());
                     } else {    //Reverse order
-                        sortedList.setText(TreeFactory.newFracTypeTree(list).reverseSort(visitor));
+                        sortedList.setText(TreeFactory.newFracTypeTree(list).reverseSort());
                     }
                     break;
                 case (3):   //Student type
@@ -648,9 +648,9 @@ public class MainWindow {
                             "Grade Level"
                     );
                     if (normal.isSelected()) {  //Normal order
-                        sortedList.setText(TreeFactory.newStudentTree(list, key).normalSort(visitor));
+                        sortedList.setText(TreeFactory.newStudentTree(list, key).normalSort());
                     } else {    //Reverse order
-                        sortedList.setText(TreeFactory.newStudentTree(list, key).reverseSort(visitor));
+                        sortedList.setText(TreeFactory.newStudentTree(list, key).reverseSort());
                     }
                     break;
                 /*
@@ -659,9 +659,9 @@ public class MainWindow {
                  */
                 default:
                     if (normal.isSelected()) {  //Normal order
-                        sortedList.setText(TreeFactory.newGenericTree(list).normalSort(visitor));
+                        sortedList.setText(TreeFactory.newGenericTree(list).normalSort());
                     } else {    //Reverse order
-                        sortedList.setText(TreeFactory.newGenericTree(list).reverseSort(visitor));
+                        sortedList.setText(TreeFactory.newGenericTree(list).reverseSort());
                     }
             }
         } catch (NumberFormatException e) { //Catches any issues in tree creation

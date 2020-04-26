@@ -15,25 +15,37 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
     public void insert(K key, V value) {
         Node<K, V> newNode = new Node<>(key, value);
-        this.root = insertRecursive(this.root, newNode);
+        insertRecursive(this.root, newNode);
         insertionAdjust(newNode);
+        if (root == null) {
+            root = newNode;
+        }
 
     }
 
-    private Node<K, V> insertRecursive(Node<K, V> node, Node<K, V> newNode) {
-        if (node == null) {
-            return newNode;
+    private void insertRecursive(Node<K, V> node, Node<K, V> newNode) {
+        if (node != null) {
+            if (node.getKey().compareTo(newNode.getKey()) == 0) {
+                node.increment();
+                node.addMultiple(node.getValue());
+                return;
+            } else if (node.getKey().compareTo(newNode.getKey()) > 0) {
+                if (node.getLeft() != null) {
+                    insertRecursive(node.getLeft(), newNode);
+                    return;
+                } else {
+                    node.setLeft(newNode);
+                }
+            } else {
+                if (node.getRight() != null) {
+                    insertRecursive(node.getRight(), newNode);
+                    return;
+                } else {
+                    node.setRight(newNode);
+                }
+            }
         }
-        if (newNode.getKey().compareTo(node.getKey()) == 0) {
-            node.increment();
-            node.addMultiple(newNode.getValue());
-            insertRecursive(null, newNode);
-        } else if (newNode.getKey().compareTo(node.getKey()) < 0) {
-            node.setLeft(insertRecursive(node.getLeft(), newNode));
-        } else {
-            node.setRight(insertRecursive(node.getRight(), newNode));
-        }
-        return node;
+        setColor(newNode, RED);
     }
 
     public void delete(K key) {
@@ -98,39 +110,90 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private void insertionAdjust(Node<K, V> node) {
+        if (getParentNode(node) == null) {
+            insertCase1(node);
+        } else if (getColor(getParentNode(node)) == BLACK) {
+            insertCase2(node);
+        } else if (getSiblingNode(getParentNode(node)) != null && getColor(getSiblingNode(getParentNode(node))) == RED) {
+            insertCase3(node);
+        } else {
+            insertCase4(node);
+        }
+        /*
         setColor(node, RED);
-        //Double Red Problems
         if (node != null && node != root && getColor(getParentNode(node)) == RED) {
-            //Try to recolor first (if appropriate)
             if (getColor(getSiblingNode(getParentNode(node))) == RED) {
                 setColor(getParentNode(node), BLACK);
                 setColor(getSiblingNode(getParentNode(node)), BLACK);
                 setColor(getGrandParentNode(node), RED);
                 insertionAdjust(getGrandParentNode(node));
-            }
-            //If parent is a left child
-            else if (getParentNode(node) == getLeftNode(getGrandParentNode(node))) {
-                //If node is a right child
-                if (node == getRightNode(getParentNode(node))) {
-                    rotateLeft(node = getParentNode(node));
+            } else if (getColor(getSiblingNode(getParentNode(node))) == BLACK) {
+                if (getParentNode(node) == getLeftNode(getGrandParentNode(node))) {
+                    if (node == getRightNode(getParentNode(node))) {
+                        rotateLeft(getParentNode(node));
+                    }
+                    rotateRight(getGrandParentNode(node));
+                    boolean temp;
+                    temp = getColor(getParentNode(node));
+                    setColor(getParentNode(node), getColor(getGrandParentNode(node)));
+                    setColor(getGrandParentNode(node), temp);
+                } else {
+                    if (node == getLeftNode(getParentNode(node))) {
+                        rotateRight(getParentNode(node));
+                    }
+                    rotateLeft(getGrandParentNode(node));
+                    boolean temp;
+                    temp = getColor(getParentNode(node));
+                    setColor(getParentNode(node), getColor(getGrandParentNode(node)));
+                    setColor(getGrandParentNode(node), temp);
                 }
-                //If node is a right or left child
-                setColor(getParentNode(node), BLACK);
-                setColor(getGrandParentNode(node), RED);
-                rotateRight(getGrandParentNode(node));
-            }
-            //If parent is a right child
-            else if (getParentNode(node) == getRightNode(getGrandParentNode(node))) {
-                //If node is a left child
-                if (node == getLeftNode(getParentNode(node))) {
-                    rotateRight(node = getParentNode(node));
-                }
-                //If node is a right or a left child
-                setColor(getParentNode(node), BLACK);
-                setColor(getGrandParentNode(node), RED);
-                rotateLeft(getGrandParentNode(node));
             }
         }
+        setColor(root, BLACK);
+
+         */
+    }
+
+    private void insertCase1(Node<K, V> n) {
+        setColor(n, BLACK);
+    }
+
+    private void insertCase2(Node<K, V> n) {
+        return;
+    }
+
+    private void insertCase3(Node<K, V> n) {
+        setColor(getParentNode(n), BLACK);
+        setColor(getSiblingNode(getParentNode(n)), BLACK);
+        setColor(getGrandParentNode(n), RED);
+        insertionAdjust(getGrandParentNode(n));
+    }
+
+    private void insertCase4(Node<K, V> n) {
+        Node<K, V> p = getParentNode(n);
+        Node<K, V> g = getGrandParentNode(n);
+
+        if (n == getRightNode(p) && p == getLeftNode(g)) {
+            rotateLeft(p);
+            n = getLeftNode(n);
+        } else if (n == getLeftNode(p) && p == getRightNode(g)) {
+            rotateRight(p);
+            n = getRightNode(n);
+        }
+        insertCase4Step2(n);
+    }
+
+    private void insertCase4Step2(Node<K, V> n) {
+        Node<K, V> p = getParentNode(n);
+        Node<K, V> g = getGrandParentNode(n);
+
+        if (n == getLeftNode(p)) {
+            rotateRight(g);
+        } else {
+            rotateLeft(g);
+        }
+        setColor(p, BLACK);
+        setColor(g, RED);
     }
 
     private void deletionAdjust(Node<K, V> node) {
@@ -203,16 +266,37 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         if (getLeftNode(node) == null) {
             return;
         }
-        Node<K, V> oldLeft = node.getLeft();
-        node.setLeft(oldLeft.getRight());
-        if (node.getParent() == null) {
-            root = oldLeft;
-        } else if (node == node.getParent().getLeft()) {
-            node.getParent().setLeft(oldLeft);
-        } else {
-            node.getParent().setRight(oldLeft);
+        /*
+         * Create a copy of the nodes left child
+         */
+        Node<K, V> old = node.getLeft();
+        /*
+         * Set the left child of the node to the right child of the nodes old left child
+         */
+        node.setLeft(old.getRight());
+        /*
+         * If noe was the root, then the old left child becomes the root
+         */
+        if (node == root) {
+            setRoot(old);
         }
-        oldLeft.setRight(node);
+        /*
+         * If node was a left child
+         */
+        else if (node == node.getParent().getLeft()) {
+            node.getParent().setLeft(old);
+        }
+        /*
+         * If node was a right child
+         */
+        else if (node == node.getParent().getRight()) {
+            node.getParent().setRight(old);
+        }
+        /*
+         * Sets node to be the right child of its old left child
+         */
+        old.setRight(node);
+
     }
 
     private void rotateLeft(Node<K, V> node) {
@@ -221,8 +305,8 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         }
         Node<K, V> oldRight = node.getRight();
         node.setRight(oldRight.getLeft());
-        if (node.getParent() == null) {
-            root = oldRight;
+        if (node == root) {
+            setRoot(oldRight);
         } else if (node == node.getParent().getLeft()) {
             node.getParent().setLeft(oldRight);
         } else {
@@ -232,49 +316,57 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private Node<K, V> getSiblingNode(Node<K, V> node) {
-        if (node != null && node.getParent() != null) {
+        if (node == null || node.getParent() == null) {
+            return null;
+        } else {
             if (node == node.getParent().getLeft()) {
                 return node.getParent().getRight();
-            } else if (node == node.getParent().getRight()) {
+            } else {
                 return node.getParent().getLeft();
             }
         }
-        return null;
     }
 
     private Node<K, V> getParentNode(Node<K, V> node) {
-        if (node != null && node.getParent() != null) {
+        if (node == null) {
+            return null;
+        } else {
             return node.getParent();
         }
-        return null;
     }
 
     private Node<K, V> getGrandParentNode(Node<K, V> node) {
-        if (node != null && node.getParent() != root) {
+        if (node == null || node.getParent() == null) {
+            return null;
+        } else {
             return node.getParent().getParent();
         }
-        return null;
+
     }
 
     private Node<K, V> getLeftNode(Node<K, V> node) {
-        if (node != null && node.getLeft() != null) {
+        if (node == null) {
+            return null;
+        } else {
             return node.getLeft();
         }
-        return null;
     }
 
     private Node<K, V> getRightNode(Node<K, V> node) {
-        if (node != null && node.getRight() != null) {
+        if (node == null) {
+            return null;
+        } else {
             return node.getRight();
         }
-        return null;
     }
 
     private boolean getColor(Node<K, V> node) {
-        if (node != null && node.getColor() == RED) {
-            return RED;
+        if (node == null) {
+            return BLACK;
+        } else {
+            return node.getColor();
         }
-        return BLACK;
+
     }
 
     private void setColor(Node<K, V> node, boolean color) {
@@ -339,7 +431,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         reverseOrder(node.getLeft(), visitor);
     }
 
-    public String normalSort(Node.Visitor visitor) {
+    public String normalSort() {
         inOrder(root, new Node.Visitor() {
             @Override
             public <k extends Comparable<k>, v> void visit(Node<k, v> node) {
@@ -357,7 +449,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return temp.trim();
     }
 
-    public String reverseSort(Node.Visitor visitor) {
+    public String reverseSort() {
         reverseOrder(root, new Node.Visitor() {
 
             @Override
