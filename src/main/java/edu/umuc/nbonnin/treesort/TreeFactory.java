@@ -6,17 +6,32 @@ import edu.umuc.nbonnin.parsers.StudentParser;
 
 import java.util.ArrayList;
 
+/*
+ *      ****Tree Factory Class**
+ *
+ * TreeFactory is an attempt at the GOF factory pattern
+ * Abstract, all methods must be called from a static context
+ *
+ * TODO: Add more comments
+ */
 public abstract class TreeFactory {
 
+    /*
+     *Takes a space delimited list of integers, returns an appropriate tree
+     */
     public static RedBlackTree<Integer, Integer> newIntegerTree(String list) {
-        Integer[] intList = IntParser.parse(list);
-        RedBlackTree<Integer, Integer> intTree = new RedBlackTree<>();
+        Integer[] intList = IntParser.parse(list); //Parses the list
+        RedBlackTree<Integer, Integer> intTree = new RedBlackTree<>(); //Creates a new tree
         for (Integer number : intList) {
-            intTree.insert(number, number);
+            intTree.insert(number, number); //Add them all to the tree
         }
         return intTree;
     }
 
+    /*
+     * Takes a space delimited list of FracType objects, returns an appropriate tree
+     * See above comments
+     */
     public static RedBlackTree<FracType, FracType> newFracTypeTree(String list) {
         FracType[] fracTypeList = FracParser.parse(list);
         RedBlackTree<FracType, FracType> fracTree = new RedBlackTree<>();
@@ -25,6 +40,11 @@ public abstract class TreeFactory {
         }
         return fracTree;
     }
+
+    /*
+     * Takes a space and comma delimited list of students, returns an appropriate tree
+     * see above comments
+     */
 
     public static RedBlackTree<? extends Comparable<?>, Student> newStudentTree(String list, String key) {
         Student[] studentList = StudentParser.parse(list);
@@ -54,6 +74,10 @@ public abstract class TreeFactory {
         }
     }
 
+    /*
+     * Detects the datatype based on errors thrown
+     * Returns an appropriate typed tree
+     */
     public static RedBlackTree<? extends Comparable<?>, ?> newGenericTree(String list) {
         ArrayList<String> errors = new ArrayList<>();
         StringBuilder errorMessage = new StringBuilder();

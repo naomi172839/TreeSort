@@ -2,8 +2,8 @@ package edu.umuc.nbonnin;
 
 import edu.umuc.nbonnin.gui.MainWindow;
 
-/**
- * Hello world!
+/*
+ * Creates and shows the GUI.  Simply a window
  */
 public class App {
     public static void main(String[] args) {
