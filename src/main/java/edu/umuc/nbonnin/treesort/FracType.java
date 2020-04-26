@@ -109,6 +109,9 @@ public class FracType implements Comparable<FracType> {
      * Create a new FracType object
      */
     public FracType(int numerator, int denominator) {
+        /*
+         * Fixes any sign issues
+         */
         if ((numerator < 0 && denominator < 0) || (numerator > 0 && denominator < 0)) {
             numerator *= -1;
             denominator *= -1;
@@ -116,7 +119,7 @@ public class FracType implements Comparable<FracType> {
         this.numerator = numerator;
         this.denominator = denominator;
         //Converts the integer to a float to prevent integer division
-        this.value = (numerator * 1.0) / denominator;
+        this.value = (numerator * 1.0) / denominator;   //Value is never really used but could be used for comparison
 
     }
 
@@ -125,7 +128,7 @@ public class FracType implements Comparable<FracType> {
      *
      * returns  FracType[] containing the two modified fractions
      *
-     * Note:    This does NOT find the greatest common denominator as that requires more time
+     * Note:    This does NOT find the least common denominator as that requires more time
      *          This methods is only to allow for a comparison between the two without worrying
      *          about floating point precision
      *          This is important for equivalent fractions as they might have slightly different
@@ -222,14 +225,20 @@ public class FracType implements Comparable<FracType> {
 
     @Override
     public int compareTo(FracType anotherFracType) {
-        FracType[] newFractions = toCommonDenominator(this, anotherFracType);
+        FracType[] newFractions = toCommonDenominator(this, anotherFracType);  //Creates new fractions
+        /*
+         * Handles 'undefined' fractions and 0 fractions
+         */
         if (newFractions[0].numerator == 0 && (newFractions[1].numerator == 0 || newFractions[1].denominator == 0)) {
             return 0;
         }
         if (newFractions[0].denominator == 0 && (newFractions[1].numerator == 0 || newFractions[1].denominator == 0)) {
             return 0;
         }
-        //Case for if both are negative
+        /*
+         * Since the denominators are equal, you only need to compare the numerators
+         */
+        //Case for if both are negative,
         if (newFractions[0].numerator < 0 && newFractions[1].numerator < 0) {
             return Math.abs(newFractions[1].numerator) - Math.abs(newFractions[0].numerator);
         }
