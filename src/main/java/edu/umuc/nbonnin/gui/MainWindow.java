@@ -677,20 +677,15 @@ public class MainWindow {
      * Will create a new JFrame showing the tree
      *
      * NOTE:    This is NOT perfect.
-     *          It works really well for smaller trees
-     *          Trees with more then 200 elements seem to cause issues with drawing
-     *          Specifically, the issue appears to be that some parents are drawn with three children
-     *              when the underlying tree has only 2.  This may also present as subtrees being drawn sideways
-     *              This appears to be dependent on size of the window and the underlying grid.
-     *              With more time, this would be generated dynamically but it is Sunday and the project is due
-     *              in 20ish hours.
+     *          It works really well for decent sized trees
+     *          It has been tested on trees up to 100000 members with no issue.
      *          If time permits, I will work more on this
      */
     private void showViewer() {
         try {
-            new Viewer(originalList.getText());
+            new Viewer(originalList.getText()); //Creating object, shows the GUI element
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(main, e.getMessage());
+            JOptionPane.showMessageDialog(main, e.getMessage());    //If there is an error in formatting
         }
     }
 }
