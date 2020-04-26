@@ -16,16 +16,18 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     public void insert(K key, V value) {
         Node<K, V> newNode = new Node<>(key, value);
         this.root = insertRecursive(this.root, newNode);
-        insertionAdjust(find(this.root, key).getParent());
+        insertionAdjust(newNode);
 
     }
 
     private Node<K, V> insertRecursive(Node<K, V> node, Node<K, V> newNode) {
         if (node == null) {
             return newNode;
-        } else if (newNode.getKey().compareTo(node.getKey()) == 0) {
+        }
+        if (newNode.getKey().compareTo(node.getKey()) == 0) {
             node.increment();
             node.addMultiple(newNode.getValue());
+            insertRecursive(null, newNode);
         } else if (newNode.getKey().compareTo(node.getKey()) < 0) {
             node.setLeft(insertRecursive(node.getLeft(), newNode));
         } else {
@@ -45,8 +47,8 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 node.decrement();
             } else {
                 //If node has 2 children
-                if (getLeftNode(node) != null && getRightNode(node) != null) {
-                    Node<K, V> temp = findMinimumInRightSubTree(node.getRight());
+                if (node.getLeft() != null && node.getRight() != null) {
+                    Node<K, V> temp = findMinimumInRightSubTree(node);
                     node.setKey(temp.getKey());
                     node.setValue(temp.getValue());
                     node = temp;
@@ -63,17 +65,14 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 if (end != null) {
                     //For trees with only two nodes
                     if (node == root) {
-                        end.setParent(null);
-                        root = end;
+                        setRoot(end);
                     }
                     //If node is a left child, replace node with end node
-                    else if (node == getLeftNode(getParentNode(node))) {
-                        end.setParent(getParentNode(node));
+                    else if (node == node.getParent().getLeft()) {
                         node.getParent().setLeft(end);
                     }
                     //If node is a right child, replace node with end node
                     else {
-                        end.setParent(getParentNode(node));
                         node.getParent().setRight(end);
                     }
                     //Fixes double black problem
@@ -83,7 +82,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 }
                 //Case for trees with single node
                 else if (node == root) {
-                    root = null;
+                    setRoot(null);
                 }
                 //Case for if the node has no children
                 else {
@@ -92,12 +91,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                         //Adjust BEFORE making the node null
                         deletionAdjust(node);
                     }
-                    //Removes the node from its parent (deleting it)
-                    if (node == getLeftNode(getParentNode(node))) {
-                        node.getParent().setLeft(null);
-                    } else {
-                        node.getParent().setRight(null);
-                    }
+                    node.removeParent();
                 }
             }
         }
@@ -137,7 +131,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 rotateLeft(getGrandParentNode(node));
             }
         }
-        setColor(root, BLACK);
     }
 
     private void deletionAdjust(Node<K, V> node) {
@@ -386,6 +379,13 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
     public Node<K, V> getRoot() {
         return root;
+    }
+
+    private void setRoot(Node<K, V> node) {
+        if (node != null) {
+            node.removeParent();
+        }
+        root = node;
     }
 
 

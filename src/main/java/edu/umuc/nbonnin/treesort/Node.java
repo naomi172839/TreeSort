@@ -18,7 +18,6 @@ public class Node<K extends Comparable<K>, V> {
         this.value = value;
         left = right = parent = null;
         count = 1;
-        color = BLACK;
         multiple = new ArrayList<>();
     }
 
@@ -42,22 +41,32 @@ public class Node<K extends Comparable<K>, V> {
         return left;
     }
 
-    public void setLeft(Node<K, V> child) {
+    public void setLeft(Node<K, V> newChild) {
+        checkAncestor(newChild);
         if (left != null) {
             left.parent = null;
         }
-        if (child != null) {
-            child.removeParent();
-            child.parent = this;
+        if (newChild != null) {
+            newChild.removeParent();
+            newChild.parent = this;
         }
-        this.left = child;
+        this.left = newChild;
     }
 
     public Node<K, V> getRight() {
         return right;
     }
 
+    private void checkAncestor(Node<K, V> child) {
+        for (Node<K, V> node = this; node != null; node = node.parent) {
+            if (node == child) {
+                throw new IllegalArgumentException("(Node) Can not be ancestor: " + child.value.toString());
+            }
+        }
+    }
+
     public void setRight(Node<K, V> child) {
+        checkAncestor(child);
         if (right != null) {
             right.parent = null;
         }
@@ -68,11 +77,13 @@ public class Node<K extends Comparable<K>, V> {
         this.right = child;
     }
 
+
     public Node<K, V> getParent() {
         return parent;
     }
 
-    private void removeParent() {
+
+    public void removeParent() {
         if (parent != null) {
             if (parent.left == this) {
                 parent.left = null;
@@ -83,10 +94,11 @@ public class Node<K extends Comparable<K>, V> {
         }
     }
 
+    /*
     public void setParent(Node<K, V> parent) {
         this.parent = parent;
     }
-
+    */
     public boolean getColor() {
         return color;
     }
@@ -97,10 +109,6 @@ public class Node<K extends Comparable<K>, V> {
 
     public int getCount() {
         return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     public void increment() {

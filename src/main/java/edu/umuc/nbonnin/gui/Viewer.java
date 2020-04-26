@@ -3,10 +3,14 @@ package edu.umuc.nbonnin.gui;
 
 import edu.umuc.nbonnin.treesort.Node;
 import edu.umuc.nbonnin.treesort.RedBlackTree;
+import edu.umuc.nbonnin.treesort.TreeFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +27,7 @@ public class Viewer extends JPanel {
     private final int GRID_WIDTH = 40;
     JFrame viewerFrame;
     JScrollPane display;
-    Thread T;
+    String masterList;
     /*
      *  ***Instance Variables***
      *
@@ -59,30 +63,25 @@ public class Viewer extends JPanel {
      * ***************************************************************************************
      * We know that the more nodes there are, the more space those nodes need
      */
-    public Viewer(RedBlackTree<?, ?> tree) {
+    public Viewer(String list) {
+        tree = TreeFactory.newGenericTree(list);
         viewerFrame = new JFrame("Viewer");
         display = new JScrollPane(this);
-        this.tree = tree;
-        if (this.tree == null) {
-            return;
-        }
         int count = getNodes();
         double maxHeight = 2 * (Math.log(count + 1) / Math.log(2));
         int preferredHeight = (int) (maxHeight * (GRID_HEIGHT * 1.5));
         int preferredWidth = (int) (maxHeight * preferredHeight * 0.75);
         this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        T = new Thread();
-        display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        display.setAutoscrolls(true);
-        viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
-        viewerFrame.setSize(new Dimension(400, 600));       //Sets the underlying frames size
-        viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
-        viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
-        viewerFrame.add(display);
-        display.setViewportView(this);
+        updateTree(list);
+    }
+
+    public void paint(Graphics g) {
+        this.removeAll();
+        paintComponent(g);
+        display.validate();
         viewerFrame.pack();
-        viewerFrame.setVisible(true);
+        viewerFrame.repaint();
+
     }
 
     private int getNodes() {
@@ -143,17 +142,38 @@ public class Viewer extends JPanel {
         });
     }
 
-    public void update(RedBlackTree<?, ?> tree) throws InvocationTargetException, InterruptedException {
-        System.out.println("Update");
-        SwingUtilities.invokeLater(() -> {
-            setTree(tree);
-            repaint();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
+    public void updateTree(String list) {
+
+        display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        display.setAutoscrolls(true);
+        viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
+        viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
+        viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
+        viewerFrame.getContentPane().add(display);
+        display.setViewportView(this);
+        viewerFrame.pack();
+        viewerFrame.setVisible(true);
+        ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
+        Timer timer = new Timer(1000, new ActionListener() {
+            final StringBuilder temp = new StringBuilder();
+            int i = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewerFrame.setTitle("Viewer -- Drawing Tree");
+                if (i >= toSplit.size()) {
+                    viewerFrame.setTitle("Viewer -- Completed Drawing");
+                    return;
+                }
+                System.out.println(toSplit.get(i));
+                temp.append(toSplit.get(i)).append(" ");
+                tree = TreeFactory.newGenericTree(temp.toString());
+                validate();
+                i++;
             }
         });
+        timer.start();
     }
 
     private int depth(Node<? extends Comparable<?>, ?> node) {
@@ -171,10 +191,5 @@ public class Viewer extends JPanel {
             return Color.black;
         }
     }
-
-    public void setTree(RedBlackTree<?, ?> tree) {
-        this.tree = tree;
-    }
-
 
 }
