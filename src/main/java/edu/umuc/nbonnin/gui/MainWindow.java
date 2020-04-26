@@ -294,8 +294,11 @@ public class MainWindow {
      * NOTE:    This is NOT perfect.
      *          It works really well for smaller trees
      *          Trees with more then 20 elements seem to cause issues with drawing
-     *          Speciffically, the issue appears to be that some parents are drawn with three children
-     *              when the underlying tree has only 2.
+     *          Specifically, the issue appears to be that some parents are drawn with three children
+     *              when the underlying tree has only 2.  This may also present as subtrees being drawn sideways
+     *              This appears to be dependent on size of the window and the underlying grid.
+     *              With more time, this would be generated dynamically but it is Sunday and the project is due
+     *              in 20ish hours.
      *          If time permits, I will work more on this
      */
     private void showViewer() {
@@ -310,34 +313,41 @@ public class MainWindow {
              * The tree from earlier is passed to the constructor
              */
             Viewer view = new Viewer(tree);
-            view.setSize(1024, 256);    //Sets a size for the window
-            view.setPreferredSize(new Dimension(1024, 256));
+            view.setPreferredSize(new Dimension(4096, 1024));   //Hardcodes the upper level dimensions
             JFrame viewerFrame = new JFrame("Viewer");  //Creates a JFrame to house the object
-            JScrollPane display = new JScrollPane(view);
-            display.setViewportView(view);
+            JScrollPane display = new JScrollPane(view);    //Adds the tree to the scrollpane
+            display.setViewportView(view);                  //Sets the view to be of the tree
             display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             display.setAutoscrolls(true);
-            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            viewerFrame.setSize(new Dimension(400, 600));
-            viewerFrame.setPreferredSize(new Dimension(768, 512));
-            viewerFrame.setLocationRelativeTo(null);
-            viewerFrame.add(display);
-            viewerFrame.pack();
-            viewerFrame.setVisible(true);
-            System.out.println("Ignore me");
-            //view.changeTree(tree.getRoot());
-        } catch (NumberFormatException e) {
+            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
+            viewerFrame.setSize(new Dimension(400, 600));       //Sets the underlying frames size
+            viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
+            viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
+            viewerFrame.add(display);       //Adds the scrollpane (and tree) to the viewer window
+            viewerFrame.pack();             //Ensures that the layout is good
+            viewerFrame.setVisible(true);   //Shows the tree
+        } catch (NumberFormatException e) {     //If there is a problem with the input
             JOptionPane.showMessageDialog(main, e.getMessage());
         }
     }
 
+    /*
+     * Creates the Input pane
+     * Adds input labels and objects to the panel
+     */
     private void createInputPanel() {
         input = new JPanel();
-        input.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        input.setLayout(new GridBagLayout());   //Allows for more complex layouts
+        GridBagConstraints c = new GridBagConstraints();    //General constraints
 
-        //Row 1, Item 1
+        /*
+         * Input Label
+         * Located in Row 1, Column 1
+         * Takes up left 1/4 ish of the row
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 1;
@@ -347,7 +357,13 @@ public class MainWindow {
         c.weighty = 0.2;
         input.add(originalLabel, c);
 
-        //Row 1, Item 2
+        /*
+         * Input TextField
+         * Located in Row 1, Column 2
+         * Takes up right 3/4ish of the row
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
@@ -358,7 +374,13 @@ public class MainWindow {
         c.weighty = 1.0;
         input.add(originalList, c);
 
-        //Row 2, Item 1
+        /*
+         * Output Label
+         * Located in Row 2, Column 1
+         * Takes up left 1/4 ish of the row
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 1;
         c.gridheight = 1;
@@ -368,7 +390,13 @@ public class MainWindow {
         c.weighty = 0.2;
         input.add(sortedLabel, c);
 
-        //Row 2, Item 2
+        /*
+         * Output TextField
+         * Located in Row 2, Column 2
+         * Takes up right 3/4 ish of the row
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -381,12 +409,21 @@ public class MainWindow {
 
     }
 
+    /*
+     * Creates the Button Panel
+     *
+     */
     private void createButtonPanel() {
         buttons = new JPanel();
-        buttons.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        buttons.setLayout(new GridBagLayout());     //GridBag allows more complex layouts, overkill here
+        GridBagConstraints c = new GridBagConstraints();    //General constraint object
 
-        //Row 1, Item 1
+        /*
+         * Sort button
+         * Located in Row 1, Column 1
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 1;
@@ -396,7 +433,12 @@ public class MainWindow {
         c.weighty = 0.3;
         buttons.add(sort, c);
 
-        //Row 1, Item 2
+        /*
+         * View button
+         * Located in Row 1, Column 2
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 1;
         c.gridy = 0;
         c.gridheight = 1;
@@ -408,13 +450,21 @@ public class MainWindow {
 
     }
 
+    /*
+     * Creates the Panel containing the sort order choices
+     */
     private void createOrderPanel() {
         orderGroup = new JPanel();
-        orderGroup.setLayout(new GridBagLayout());
-        orderGroup.setBorder(BorderFactory.createTitledBorder("Sort Order"));
-        GridBagConstraints c = new GridBagConstraints();
+        orderGroup.setLayout(new GridBagLayout());  //GridBag allows more complex layouts
+        orderGroup.setBorder(BorderFactory.createTitledBorder("Sort Order"));   //Allows a title around the group
+        GridBagConstraints c = new GridBagConstraints();    //General constraint object
 
-        //Row 1, Item 1
+        /*
+         * Ascending Label
+         * Located in Row 1, Column 1
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 1;
@@ -424,7 +474,12 @@ public class MainWindow {
         c.weighty = 0.2;
         orderGroup.add(orderNormal, c);
 
-        //Row 1, Item 2
+        /*
+         * Ascending RadioButton
+         * Located in Row 1, Column 2
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 1;
         c.gridy = 0;
         c.gridheight = 1;
@@ -434,7 +489,12 @@ public class MainWindow {
         c.weighty = 0.5;
         orderGroup.add(normal, c);
 
-        //Row 2, Item 1
+        /*
+         * Descending Label
+         * Located in Row 2, Column 1
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 1;
         c.gridheight = 1;
@@ -444,7 +504,12 @@ public class MainWindow {
         c.weighty = 0.2;
         orderGroup.add(orderReverse, c);
 
-        //Row 2, Item 2
+        /*
+         * Descending RadioButton
+         * Located in Row 2, Column 2
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 1;
         c.gridy = 1;
         c.gridheight = 1;
@@ -455,13 +520,21 @@ public class MainWindow {
         orderGroup.add(reverse, c);
     }
 
+    /*
+     * Creates the Panel containing the DataType objects
+     */
     private void createTypePanel() {
         typeGroup = new JPanel();
-        typeGroup.setLayout(new GridBagLayout());
-        typeGroup.setBorder(BorderFactory.createTitledBorder("Type"));
-        GridBagConstraints c = new GridBagConstraints();
+        typeGroup.setLayout(new GridBagLayout());   //GridBag allows for more complex layouts
+        typeGroup.setBorder(BorderFactory.createTitledBorder("Type"));  //Creates a titled border
+        GridBagConstraints c = new GridBagConstraints();    //General Constraint object
 
-        //Row 1, Item 1
+        /*
+         * Integer Type Label
+         * Located in Row 1, Column 1
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 1;
@@ -471,7 +544,12 @@ public class MainWindow {
         c.weighty = 0.2;
         typeGroup.add(typeInt, c);
 
-        //Row 1, Item 2
+        /*
+         * Integer RadioButton
+         * Located in Row 1, Column 2
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 1;
         c.gridy = 0;
         c.gridheight = 1;
@@ -481,7 +559,12 @@ public class MainWindow {
         c.weighty = 0.5;
         typeGroup.add(integer, c);
 
-        //Row 2, Item 1
+        /*
+         * Fraction Label
+         * Located in Row 2, Column 1
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 0;
         c.gridy = 1;
         c.gridheight = 1;
@@ -491,7 +574,12 @@ public class MainWindow {
         c.weighty = 0.2;
         typeGroup.add(typeFrac, c);
 
-        //Row 2, Item 2
+        /*
+         * Fraction RadioButton
+         * Located in Row 2, Column 2
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 1;
         c.gridy = 1;
         c.gridheight = 1;
@@ -501,7 +589,12 @@ public class MainWindow {
         c.weighty = 0.5;
         typeGroup.add(fraction, c);
 
-        //Row 1, Item 3
+        /*
+         * Student Label
+         * Located in Row 1, Column 3
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 4;
         c.gridy = 0;
         c.gridheight = 1;
@@ -511,7 +604,12 @@ public class MainWindow {
         c.weighty = 0.2;
         typeGroup.add(typeStudent, c);
 
-        //Row 1, Item 4
+        /*
+         * Student RadioButton
+         * Located in Row 1, Column 4
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 5;
         c.gridy = 0;
         c.gridheight = 1;
@@ -521,7 +619,12 @@ public class MainWindow {
         c.weighty = 0.5;
         typeGroup.add(student, c);
 
-        //Row 2, Item 3
+        /*
+         * Detect Label
+         * Located in Row 2, Column 3
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 4;
         c.gridy = 1;
         c.gridheight = 1;
@@ -531,7 +634,12 @@ public class MainWindow {
         c.weighty = 0.2;
         typeGroup.add(typeDetect, c);
 
-        //Row 2, Item 3
+        /*
+         * Detect RadioButton
+         * Located in Row 2, Column 4
+         *
+         * NOTE: All of the GridBag constants are repeated due to the added clarity
+         */
         c.gridx = 5;
         c.gridy = 1;
         c.gridheight = 1;
@@ -542,28 +650,43 @@ public class MainWindow {
         typeGroup.add(detect, c);
     }
 
+    /*
+     * Gets the unsorted list, creates a tree, traverses it, and displays the result
+     *
+     * NOTE:    Ideally, I would have defined the visitor within this method/class rather than
+     *          putting it in the RedBlackTree class.  I did not switch to using the visitor pattern
+     *          until I decided to implement a viewer (I actually had never heard of it before that).
+     *          because of that, I kept the logic where it originally was.
+     *          Time permitting, I will fix this and you will never see this message.
+     */
     private void getSorted() {
-        String list = originalList.getText();
-        Node.Visitor visitor = null;
+        String list = originalList.getText();   //Gets the unsorted list
+        Node.Visitor visitor = null;            //Defines a blank visitor
         try {
-            switch (type.getSelection().getMnemonic()) {
-                case (1):
-                    if (normal.isSelected()) {
+            switch (type.getSelection().getMnemonic()) {    //Gets the datatype selection
+                case (1):   //Integer
+                    if (normal.isSelected()) {  //Normal order
                         sortedList.setText(TreeFactory.newIntegerTree(list).normalSort(visitor));
-                    } else {
+                    } else {    //Reverse order
                         sortedList.setText(TreeFactory.newIntegerTree(list).reverseSort(visitor));
                     }
                     break;
-                case (2):
-                    if (normal.isSelected()) {
+                case (2):   //Fraction
+                    if (normal.isSelected()) {  //Normal order
                         sortedList.setText(TreeFactory.newFracTypeTree(list).normalSort(visitor));
-                    } else {
+                    } else {    //Reverse order
                         sortedList.setText(TreeFactory.newFracTypeTree(list).reverseSort(visitor));
                     }
                     break;
-                case (3):
-                    String[] choices = new String[]{"Grade Level", "Student ID", "GPA"};
-                    String key = (String) JOptionPane.showInputDialog(
+                case (3):   //Student type
+                    /*
+                     * Three choices to sort by.
+                     * Technically, all of the fields are comparable and could be sorted but just the numeric
+                     *      options are listed here.
+                     * With more time, I would fix that and actually flush out the student class
+                     */
+                    String[] choices = new String[]{"Grade Level", "Student ID", "GPA"};    //Sort options
+                    String key = (String) JOptionPane.showInputDialog(  //Displays popup with choices for the user
                             main,
                             "Please choose what to sort by",
                             "Sort By Choice",
@@ -572,21 +695,24 @@ public class MainWindow {
                             choices,
                             "Grade Level"
                     );
-                    if (normal.isSelected()) {
+                    if (normal.isSelected()) {  //Normal order
                         sortedList.setText(TreeFactory.newStudentTree(list, key).normalSort(visitor));
-                    } else {
+                    } else {    //Reverse order
                         sortedList.setText(TreeFactory.newStudentTree(list, key).reverseSort(visitor));
                     }
                     break;
-                //Covers case 4
+                /*
+                 * The default case is also the default selection
+                 * This also covers choice 4 as they are identical
+                 */
                 default:
-                    if (normal.isSelected()) {
+                    if (normal.isSelected()) {  //Normal order
                         sortedList.setText(TreeFactory.newGenericTree(list).normalSort(visitor));
-                    } else {
+                    } else {    //Reverse order
                         sortedList.setText(TreeFactory.newGenericTree(list).reverseSort(visitor));
                     }
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) { //Catches any issues in tree creation
             JOptionPane.showMessageDialog(main, e.getMessage());
         }
 
