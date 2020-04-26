@@ -34,11 +34,11 @@ public abstract class FracParser {
      * Throws:  NumberFormatException   -   if there are non digit characters, except '-' and '/'
      */
     public static FracType[] parse(String list) {
-        checkValid(list);
+        checkValid(list); //Ensures the list contains items
         ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
-        toSplit.removeIf(s -> s.equals(""));
-        ArrayList<FracType> split = new ArrayList<>();
-        String[] temp;
+        toSplit.removeIf(s -> s.equals("")); //Removes any empty elements
+        ArrayList<FracType> split = new ArrayList<>(); //Holds the final tokens
+        String[] temp; // Used to hold the split tokens
         for (String token : toSplit) {
             if (!token.matches("(?:[-1-9][0-9]*|0)/[1-9][0-9]*")) {
                 throw new NumberFormatException("(FracType) Invalid Expression: " + token + "\n");
