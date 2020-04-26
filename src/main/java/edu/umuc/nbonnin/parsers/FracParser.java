@@ -29,7 +29,7 @@ import java.util.Arrays;
 public abstract class FracParser {
 
     /*
-     * Convert a string into a IntType array
+     * Convert a string into a FracType array
      *
      * Throws:  NumberFormatException   -   if there are non digit characters, except '-' and '/'
      */

@@ -1,5 +1,7 @@
 package edu.umuc.nbonnin.treesort;
 
+import edu.umuc.nbonnin.parsers.FracParser;
+
 /*
  *          *****FracType Class*****
  *
@@ -121,6 +123,16 @@ public class FracType implements Comparable<FracType> {
         //Converts the integer to a float to prevent integer division
         this.value = (numerator * 1.0) / denominator;   //Value is never really used but could be used for comparison
 
+    }
+
+    /*
+     * 1 Argument Constructor
+     * Can take a string passed to it
+     */
+    public FracType(String fraction) {
+        FracType[] frac = FracParser.parse(fraction);
+        this.numerator = frac[0].getNumerator();
+        this.denominator = frac[0].getDenominator();
     }
 
     /*
