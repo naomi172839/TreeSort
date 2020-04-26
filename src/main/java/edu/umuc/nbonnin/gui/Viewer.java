@@ -54,9 +54,9 @@ public class Viewer extends JPanel {
      * k = log2(n+1)-1
      * We also know that the total number of red nodes is constrained by the number of black nodes
      * Which means we know that:
-     * height = max black nodes + max red nodes AND max black nodes = max red nodes
+     * height = max black nodes OR max red nodes AND max black nodes = max red nodes
      * therefore we know that the height of any RBTree can be defined as
-     * h = 2*log2(n+1)
+     * h = log2(n+1)
      * ***************************************************************************************
      * We know that the more nodes there are, the more space those nodes need
      */
@@ -68,7 +68,7 @@ public class Viewer extends JPanel {
         double maxHeight = 2 * (Math.log(count + 1) / Math.log(2));
         GRID_HEIGHT = 40;
         GRID_WIDTH = 40;
-        int preferredHeight = (int) Math.ceil(maxHeight * GRID_HEIGHT * 0.75);
+        int preferredHeight = (int) Math.ceil(maxHeight * GRID_HEIGHT * 0.5) + 120;
         int preferredWidth = (int) Math.ceil((count + 1) / 2.0 * GRID_WIDTH * 2.0) + 120;
         this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         updateTree(list);
@@ -146,7 +146,8 @@ public class Viewer extends JPanel {
         display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         display.setAutoscrolls(true);
         viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
-        viewerFrame.setPreferredSize(new Dimension(1024, 512));  //Sets a preferred size
+        Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        viewerFrame.setPreferredSize(screenSize.getSize());  //Sets a preferred size
         viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
         viewerFrame.getContentPane().add(display);
         display.setViewportView(this);
