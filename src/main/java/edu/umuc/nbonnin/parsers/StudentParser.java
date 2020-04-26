@@ -11,9 +11,14 @@ import java.util.Arrays;
  * StudentParser implements DataParser
  * StudentParser is abstract and only its static methods can be used
  *
- * The StudentParser class takes a space delimited string of rational numbers in the form 'x/y'
+ * The StudentParser class takes a space delimited string of rational numbers in the below form
+ * lastName,firstName,grade,studentID,gpa ...
  * The StudentParser class parses the string and returns an array of Student objects
  * This array can be used by a Tree to create Nodes
+ *
+ * NOTE:    This class is literally a skeleton
+ *          It is included as a proof of concept rather than an actual real class
+ *
  *
  * Constructor: 0 Argument  -   private constructor to prevent creation of IntParser objects
  *
@@ -43,16 +48,16 @@ public class StudentParser {
     /*
      * Convert a string into a IntType array
      *
-     * Throws:  NumberFormatException   -   if there are non digit characters, except '-' and '/'
+     * Throws:  NumberFormatException   -   if there are not enough strings or they are of the wrong type
      */
     public static Student[] parse(String list) {
         String lastName, firstName;
         int grade, studentID;
         double gpa;
-        checkValid(list);
+        checkValid(list); //Ensures that the list is actually real
         ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
-        toSplit.removeIf(s -> s.equals(""));
-        ArrayList<Student> split = new ArrayList<>();
+        toSplit.removeIf(s -> s.equals("")); //Removes empty characters
+        ArrayList<Student> split = new ArrayList<>(); //Contains the final tokens
         for (String token : toSplit) {
             ArrayList<String> secondSplit = new ArrayList<>(Arrays.asList(token.split(",")));
             if (secondSplit.size() != 5) {
@@ -63,7 +68,7 @@ public class StudentParser {
             grade = Integer.parseInt(secondSplit.get(2));
             studentID = Integer.parseInt(secondSplit.get(3));
             gpa = Double.parseDouble(secondSplit.get(4));
-            split.add(new Student(
+            split.add(new Student( //Creates a new student and adds it
                     lastName,
                     firstName,
                     grade,

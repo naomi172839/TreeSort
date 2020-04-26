@@ -51,12 +51,12 @@ public abstract class IntParser {
      * Throws:  NumberFormatException   -   if there are non digit characters, except '-'
      */
     public static Integer[] parse(String list) {
-        checkValid(list);
+        checkValid(list); //Ensures string contains items
         ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(list.split(" ")));
-        toSplit.removeIf(s -> s.equals(""));
-        ArrayList<Integer> split = new ArrayList<>();
+        toSplit.removeIf(s -> s.equals(""));    //Removes empty items
+        ArrayList<Integer> split = new ArrayList<>();   //Holds final tokens
         for (String token : toSplit) {
-            if (!token.matches("[0-9-]+")) {
+            if (!token.matches("[0-9-]+")) { //Regex check
                 throw new NumberFormatException("(Integer) Invalid Expression: " + token + "\n");
             }
             split.add(Integer.parseInt(token));
