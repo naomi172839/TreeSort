@@ -17,14 +17,11 @@ import java.util.*;
  *
  * The Viewer class extends JPanel
  * The Viewer class overrides the paintComponent method to create the tree
+ *
+ * TODO: Add in the methods comments above the class
  */
 public class Viewer extends JPanel {
 
-    private final int GRID_HEIGHT;
-    private final Map<Node<? extends Comparable<?>, ?>, Point> cords = new HashMap<>();
-    private final int GRID_WIDTH;
-    JFrame viewerFrame;
-    JScrollPane display;
     /*
      *  ***Instance Variables***
      *
@@ -37,7 +34,20 @@ public class Viewer extends JPanel {
      * GRID_HEIGHT
      *          :   int                         -   How far apart each node should be vertically
      *
+     * viewerFrame
+     *          :   JFrame                      -   The Window to contain the viewer application
+     *
      */
+
+    private final Map<Node<? extends Comparable<?>, ?>, Point> cords = new HashMap<>();
+
+    private final int GRID_WIDTH;
+    private final int GRID_HEIGHT;
+
+    private final JFrame viewerFrame;
+
+    private final JScrollPane display;
+
     private RedBlackTree<? extends Comparable<?>, ?> tree;
 
     /*
@@ -59,32 +69,47 @@ public class Viewer extends JPanel {
      * h = log2(n+1)
      * ***************************************************************************************
      * We know that the more nodes there are, the more space those nodes need
+     * We also know that this application uses the following amount of grids:
+     * Height:  (1/2) * maxHeight
+     * Weight:  2 * maxLeafNodes
+     *
+     * We add a padding of 120px on either side to account for larger then normal nodes
+     * ***************************************************************************************
      */
     public Viewer(String list) {
-        tree = TreeFactory.newGenericTree(list);
-        viewerFrame = new JFrame("Viewer");
-        display = new JScrollPane(this);
-        int count = getNodes();
-        double maxHeight = 2 * (Math.log(count + 1) / Math.log(2));
         GRID_HEIGHT = 40;
         GRID_WIDTH = 40;
-        int preferredHeight = (int) Math.ceil(maxHeight * GRID_HEIGHT * 0.5) + 120;
-        int preferredWidth = (int) Math.ceil((count + 1) / 2.0 * GRID_WIDTH * 2.0) + 120;
-        this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        updateTree(list);
+        tree = TreeFactory.newGenericTree(list);    //Creates a tree with all of the elements, allows the initial view
+        viewerFrame = new JFrame("Viewer");    //Creates the Frame
+        display = new JScrollPane(this);      //Adds this to a ScrollPane as the image can get huge
+        int count = getNodes();                     //Gets the total number of nodes in the tree
+        double maxHeight = 2 * (Math.log(count + 1) / Math.log(2)); //See above
+        int preferredHeight = (int) Math.ceil(maxHeight * GRID_HEIGHT * 0.5) + 120; //See above
+        double maxLeafNodes = (count + 1) / 2.0;    //See above
+        int preferredWidth = (int) Math.ceil((maxLeafNodes) * GRID_WIDTH * 2.0) + 120;  //See above
+        this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));  //Sets the dimensions of the Panel
+        updateTree(list);   //Calls the update methodTree method which animates the tree creation
     }
 
+    /*
+     * Overrides the paint method to ensure that the frame is always displaying the right information
+     */
     public void paint(Graphics g) {
-        this.removeAll();
-        paintComponent(g);
-        display.validate();
-        viewerFrame.pack();
-        viewerFrame.repaint();
-
+        this.removeAll();   //Probably not necessary, but in here to be safe
+        paintComponent(g);  //Adds the components in the proper place
+        display.validate(); //Validates the call
+        viewerFrame.pack(); //Repacks the frame, also calls repaint
+        viewerFrame.repaint();  //Explicit repaint call to be safe
     }
 
+    /*
+     * Helper method to get the final node count in the full tree
+     */
     private int getNodes() {
-        final int[] count = {0};
+        final int[] count = {0};    //Stored as an array so that the abstract method can access and change it
+        /*
+         * Traverses the tree in order and uses the defined visitor to count the nodes
+         */
         tree.inOrder(tree.getRoot(), new Node.Visitor() {
             @Override
             public <K extends Comparable<K>, V> void visit(Node<K, V> node) {
@@ -94,12 +119,22 @@ public class Viewer extends JPanel {
         return count[0];
     }
 
+    /*
+     * Overrides the paintComponent method
+     * Creates and adds all of the components to the JPane
+     */
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (tree.getRoot() == null) {
+        super.paintComponent(g);    //Super constructor since the overall pane is not changing
+        if (tree.getRoot() == null) { //Catches all of the null pointer exceptions hopefully
             return;
         }
+        /*
+         * Traverses the tree in order with the defined visitor
+         * Going in order, the cordinates are calculated for each node as follows:
+         * x = x+GRID_WIDTH
+         * y = GRID_HEIGHT*1+ the depth of the node
+         */
         tree.inOrder(tree.getRoot(), new Node.Visitor() {
             private int x = GRID_WIDTH;
 
@@ -113,71 +148,96 @@ public class Viewer extends JPanel {
             }
         });
 
+        /*
+         * Traverses the tree in post order with the defined visitor
+         * Going in post order, the nodes and lines are drawn as below
+         */
         tree.postOrder(tree.getRoot(), new Node.Visitor() {
             @Override
             public <K extends Comparable<K>, V> void visit(Node<K, V> node) {
-                String value = node.getValue().toString();
-                Point current = cords.get(node);
-                if (node.getParent() != null) {
-                    Point parent = cords.get(node.getParent());
+                String value = node.getValue().toString(); //Gets the name of the node
+                Point current = cords.get(node);    //Local variable for the coordinates of the current node
+                if (node.getParent() != null) { //If the node has a parent, i.e. if it is not the root
+                    Point parent = cords.get(node.getParent()); //Get the location of the parent node
                     g.setColor(Color.black);
-                    g.drawLine(current.x, current.y, parent.x, parent.y);
+                    g.drawLine(current.x, current.y, parent.x, parent.y); //Draws a line between the two points
                 }
-                FontMetrics fm = g.getFontMetrics();
-                Rectangle r = fm.getStringBounds(value, g).getBounds();
-                r.setLocation(current.x - r.width / 2, current.y - r.height / 2);
+                FontMetrics fm = g.getFontMetrics();    //Gets the font information being used
+                Rectangle r = fm.getStringBounds(value, g).getBounds(); //Gets the bounds of the string
+                r.setLocation(current.x - r.width / 2, current.y - r.height / 2); //Sets the x/y position of the text
                 Color nodeColor = getNodeColor(node);
                 Color textColor;
-                if (nodeColor.getRed() + nodeColor.getGreen() + nodeColor.getBlue() > 380) {
+                if (nodeColor.getRed() + nodeColor.getGreen() + nodeColor.getBlue() > 380) { //Per google, this is the cutoff
                     textColor = Color.black;
                 } else {
                     textColor = Color.white;
                 }
-                g.setColor(nodeColor);
-                g.fillRect(r.x - 2, r.y - 2, r.width + 4, r.height + 4);
+                g.setColor(nodeColor); //Gets the nodes color
+                g.fillRect(r.x - 2, r.y - 2, r.width + 4, r.height + 4); //Fills the node
                 g.setColor(textColor);
-                g.drawString(value, r.x, r.y + r.height);
+                g.drawString(value, r.x, r.y + r.height); //Draws the string
             }
         });
     }
 
-    public void updateTree(String list) {
+    /*
+     * The meat and potatoes of the class
+     * Update will initially display the entire tree
+     * It will then animate each point being added in the original order
+     *
+     * NOTE:    This is not done efficiently
+     *          The entire tree is recreated each time rather than using the existing tree
+     */
+    private void updateTree(String list) {
         display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        display.setAutoscrolls(true);
+        display.setAutoscrolls(true);   //As needed, autoscroll
         viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
-        Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();  //Screen size
         viewerFrame.setPreferredSize(screenSize.getSize());  //Sets a preferred size
         viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
-        viewerFrame.getContentPane().add(display);
-        display.setViewportView(this);
-        viewerFrame.pack();
-        viewerFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        viewerFrame.setVisible(true);
-        StringBuilder temp = new StringBuilder();
+        viewerFrame.getContentPane().add(display);  //Adds the ScrollPane to the JFrame
+        display.setViewportView(this);  //Set the viewport to be on the JPanel with the tree
+        display.getViewport().setViewPosition(new Point(this.getPreferredSize().width / 2 - 120, 0)); //Start at root
+        viewerFrame.pack(); //Make sure everything is laid out right
+        viewerFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); //Fill the entire screen, leave the close button
+        viewerFrame.setVisible(true);   //Shows it to the user
+        StringBuilder temp = new StringBuilder();   //Used for the animation
+        /*
+         * Below is a very inefficient way to remove any duplicates from the list
+         * It is fast and easy to do though and is a placeholder until I have time to flushout a better method
+         */
         ArrayList<String> original = new ArrayList<>(Arrays.asList(list.split(" ")));
         LinkedHashSet<String> toConvert = new LinkedHashSet<>(original);
         ArrayList<String> toSplit = new ArrayList<>(toConvert);
-        Timer timer = new Timer(1000, new ActionListener() {
-            int i = 0;
+        /*
+         * Defines a Swing Timer object used to animate the tree
+         * Delay time of 750ms
+         */
+        Timer timer = new Timer(750, new ActionListener() {
+            int i = 0;  //Used to get the next element
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 viewerFrame.setTitle("Viewer -- Drawing Tree");
-                if (i >= toSplit.size()) {
+                if (i >= toSplit.size()) {  //Prevents the null pointer exception
                     viewerFrame.setTitle("Viewer -- Completed Drawing");
                     return;
                 }
-                temp.append(toSplit.get(i)).append(" ");
-                tree = TreeFactory.newGenericTree(temp.toString());
-                validate();
+                temp.append(toSplit.get(i)).append(" ");    //Adds the next character to the string
+                tree = TreeFactory.newGenericTree(temp.toString()); //Recreates the tree
+                validate(); //Forces the redraw of the panel
                 i++;
             }
         });
-        timer.setInitialDelay(30000);
-        timer.start();
+        timer.setInitialDelay(15000);   //Shows the complete tree for 15 seconds
+        timer.start();  //Starts the timer loop
     }
 
+    /*
+     * Helper method to calculate the depth of any given node
+     * Recursive method that simply counts the path until hitting a leaf node
+     */
     private int depth(Node<? extends Comparable<?>, ?> node) {
         if (node.getParent() == null) {
             return 0;
@@ -186,10 +246,13 @@ public class Viewer extends JPanel {
         }
     }
 
+    /*
+     * Helper method to get a nodes color as a actual color
+     */
     private Color getNodeColor(Node<? extends Comparable<?>, ?> node) {
-        if (node.getColor()) {
+        if (node.getColor()) {  //If red
             return Color.red;
-        } else {
+        } else {    //If black
             return Color.black;
         }
     }
