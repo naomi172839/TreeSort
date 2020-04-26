@@ -16,7 +16,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     public void insert(K key, V value) {
         Node<K, V> newNode = new Node<>(key, value);
         this.root = insertRecursive(this.root, newNode);
-        insertionAdjust(find(this.root, key));
+        insertionAdjust(find(this.root, key).getParent());
 
     }
 
@@ -28,12 +28,8 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             node.addMultiple(newNode.getValue());
         } else if (newNode.getKey().compareTo(node.getKey()) < 0) {
             node.setLeft(insertRecursive(node.getLeft(), newNode));
-            assert node.getLeft() != null;
-            node.getLeft().setParent(node);
         } else {
             node.setRight(insertRecursive(node.getRight(), newNode));
-            assert node.getRight() != null;
-            node.getRight().setParent(node);
         }
         return node;
     }
@@ -114,7 +110,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             //Try to recolor first (if appropriate)
             if (getColor(getSiblingNode(getParentNode(node))) == RED) {
                 setColor(getParentNode(node), BLACK);
-                setColor(getSiblingNode(node.getParent()), BLACK);
+                setColor(getSiblingNode(getParentNode(node)), BLACK);
                 setColor(getGrandParentNode(node), RED);
                 insertionAdjust(getGrandParentNode(node));
             }
@@ -223,9 +219,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         } else {
             node.getParent().setRight(oldLeft);
         }
-        oldLeft.setParent(node.getParent());
         oldLeft.setRight(node);
-        node.setParent(oldLeft);
     }
 
     private void rotateLeft(Node<K, V> node) {
@@ -241,9 +235,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         } else {
             node.getParent().setRight(oldRight);
         }
-        oldRight.setParent(node.getParent());
         oldRight.setLeft(node);
-        node.setParent(oldRight);
     }
 
     private Node<K, V> getSiblingNode(Node<K, V> node) {
@@ -350,7 +342,6 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             return;
         }
         reverseOrder(node.getRight(), visitor);
-        int tempCount = node.getCount();
         visitor.visit(node);
         reverseOrder(node.getLeft(), visitor);
     }
@@ -359,6 +350,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         inOrder(root, new Node.Visitor() {
             @Override
             public <k extends Comparable<k>, v> void visit(Node<k, v> node) {
+                if (node == null) {
+                    return;
+                }
                 returnedString.append(node.getValue().toString()).append(" ");
                 for (v value : node.getMultiple()) {
                     returnedString.append(value.toString()).append(" ");
@@ -375,6 +369,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
             @Override
             public <k extends Comparable<k>, v> void visit(Node<k, v> node) {
+                if (node == null) {
+                    return;
+                }
                 returnedString.append(node.getValue().toString()).append(" ");
                 for (v value : node.getMultiple()) {
                     returnedString.append(value.toString()).append(" ");

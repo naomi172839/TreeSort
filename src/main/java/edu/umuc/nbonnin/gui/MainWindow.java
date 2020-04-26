@@ -7,6 +7,9 @@ import edu.umuc.nbonnin.treesort.TreeFactory;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  *          *****Main Window Class*****
@@ -92,7 +95,7 @@ public class MainWindow {
     private JTextField originalList, sortedList;
     private JButton sort, view;
     private JRadioButton normal, reverse, integer, fraction, student, detect;
-    private ButtonGroup order, type;
+    private ButtonGroup order, type;    //Order could be local.  Included here for consistency
     private JPanel input, buttons, typeGroup, orderGroup;
 
     /*
@@ -283,53 +286,6 @@ public class MainWindow {
         type.add(student);      //Adds to the group
         type.add(detect);       //Adds to the group
         detect.setSelected(true);      //Default selection
-    }
-
-    /*
-     * Shows a graphical representation of the tree
-     *
-     * Will create a JOptionPane if there is an invalid tree
-     * Will create a new JFrame showing the tree
-     *
-     * NOTE:    This is NOT perfect.
-     *          It works really well for smaller trees
-     *          Trees with more then 20 elements seem to cause issues with drawing
-     *          Specifically, the issue appears to be that some parents are drawn with three children
-     *              when the underlying tree has only 2.  This may also present as subtrees being drawn sideways
-     *              This appears to be dependent on size of the window and the underlying grid.
-     *              With more time, this would be generated dynamically but it is Sunday and the project is due
-     *              in 20ish hours.
-     *          If time permits, I will work more on this
-     */
-    private void showViewer() {
-        try {
-            /*
-             * Generic tree of the type returned from the TreeFactory
-             * Used to create the graphical tree
-             */
-            RedBlackTree<?, ?> tree = TreeFactory.newGenericTree(originalList.getText());
-            /*
-             * Creates a new viewer object that contains the actual graphical tree
-             * The tree from earlier is passed to the constructor
-             */
-            Viewer view = new Viewer(tree);
-            view.setPreferredSize(new Dimension(4096, 1024));   //Hardcodes the upper level dimensions
-            JFrame viewerFrame = new JFrame("Viewer");  //Creates a JFrame to house the object
-            JScrollPane display = new JScrollPane(view);    //Adds the tree to the scrollpane
-            display.setViewportView(view);                  //Sets the view to be of the tree
-            display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            display.setAutoscrolls(true);
-            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
-            viewerFrame.setSize(new Dimension(400, 600));       //Sets the underlying frames size
-            viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
-            viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
-            viewerFrame.add(display);       //Adds the scrollpane (and tree) to the viewer window
-            viewerFrame.pack();             //Ensures that the layout is good
-            viewerFrame.setVisible(true);   //Shows the tree
-        } catch (NumberFormatException e) {     //If there is a problem with the input
-            JOptionPane.showMessageDialog(main, e.getMessage());
-        }
     }
 
     /*
@@ -716,6 +672,71 @@ public class MainWindow {
             JOptionPane.showMessageDialog(main, e.getMessage());
         }
 
+    }
+
+    /*
+     * Shows a graphical representation of the tree
+     *
+     * Will create a JOptionPane if there is an invalid tree
+     * Will create a new JFrame showing the tree
+     *
+     * NOTE:    This is NOT perfect.
+     *          It works really well for smaller trees
+     *          Trees with more then 20 elements seem to cause issues with drawing
+     *          Specifically, the issue appears to be that some parents are drawn with three children
+     *              when the underlying tree has only 2.  This may also present as subtrees being drawn sideways
+     *              This appears to be dependent on size of the window and the underlying grid.
+     *              With more time, this would be generated dynamically but it is Sunday and the project is due
+     *              in 20ish hours.
+     *          If time permits, I will work more on this
+     */
+    private void showViewer() {
+        try {
+            /*
+             * Generic tree of the type returned from the TreeFactory
+             * Used to create the graphical tree
+             */
+            RedBlackTree<?, ?> tree = null;//TreeFactory.newGenericTree(originalList.getText());
+            /*
+             * Creates a new viewer object that contains the actual graphical tree
+             * The tree from earlier is passed to the constructor
+             */
+            Viewer view = null;
+            ArrayList<String> toSplit = new ArrayList<>(Arrays.asList(originalList.getText().split(" ")));
+            StringBuilder temp = new StringBuilder();
+            for (String s : toSplit) {
+                temp.append(s).append(" ");
+                tree = TreeFactory.newGenericTree(temp.toString());
+                if (view == null) {
+                    view = new Viewer(tree);
+                }
+                view.update(tree);
+                System.out.println("Repaint");
+            }
+/*
+            Viewer view = new Viewer(tree);
+            JFrame viewerFrame = new JFrame("Viewer");  //Creates a JFrame to house the object
+            JScrollPane display = new JScrollPane(view);    //Adds the tree to the scrollpane
+            display.setViewportView(view);                  //Sets the view to be of the tree
+            display.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            display.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            display.setAutoscrolls(true);
+            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //Releases the resources
+            viewerFrame.setSize(new Dimension(400, 600));       //Sets the underlying frames size
+            viewerFrame.setPreferredSize(new Dimension(768, 512));  //Sets a preferred size
+            viewerFrame.setLocationRelativeTo(null);    //Should places window centerish on the screen
+            viewerFrame.add(display);       //Adds the scrollpane (and tree) to the viewer window
+            viewerFrame.pack();             //Ensures that the layout is good
+            viewerFrame.setVisible(true);   //Shows the tree
+
+ */
+        } catch (NumberFormatException e) {     //If there is a problem with the input
+            JOptionPane.showMessageDialog(main, e.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }
 

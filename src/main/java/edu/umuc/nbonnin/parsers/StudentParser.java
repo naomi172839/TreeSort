@@ -55,6 +55,9 @@ public class StudentParser {
         ArrayList<Student> split = new ArrayList<>();
         for (String token : toSplit) {
             ArrayList<String> secondSplit = new ArrayList<>(Arrays.asList(token.split(",")));
+            if (secondSplit.size() != 5) {
+                throw new NumberFormatException("(Student) Illegal Expression: " + token);
+            }
             lastName = secondSplit.get(0);
             firstName = secondSplit.get(1);
             grade = Integer.parseInt(secondSplit.get(2));

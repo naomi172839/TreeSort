@@ -42,20 +42,45 @@ public class Node<K extends Comparable<K>, V> {
         return left;
     }
 
-    public void setLeft(Node<K, V> left) {
-        this.left = left;
+    public void setLeft(Node<K, V> child) {
+        if (left != null) {
+            left.parent = null;
+        }
+        if (child != null) {
+            child.removeParent();
+            child.parent = this;
+        }
+        this.left = child;
     }
 
     public Node<K, V> getRight() {
         return right;
     }
 
-    public void setRight(Node<K, V> right) {
-        this.right = right;
+    public void setRight(Node<K, V> child) {
+        if (right != null) {
+            right.parent = null;
+        }
+        if (child != null) {
+            child.removeParent();
+            child.parent = this;
+        }
+        this.right = child;
     }
 
     public Node<K, V> getParent() {
         return parent;
+    }
+
+    private void removeParent() {
+        if (parent != null) {
+            if (parent.left == this) {
+                parent.left = null;
+            } else if (parent.right == this) {
+                parent.right = null;
+            }
+            this.parent = null;
+        }
     }
 
     public void setParent(Node<K, V> parent) {
